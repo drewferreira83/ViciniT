@@ -20,7 +20,7 @@ class InfoViewController: UIViewController {
             let myRequest = NSURLRequest(url: localFile) as URLRequest
             infoWebView.load(myRequest)
         } else {
-            Debug.log("Couldn't load Help file!", toConsole: true, flag: .important )
+            Debug.log("Couldn't load Help file!", flag: .important )
         }
         
     }

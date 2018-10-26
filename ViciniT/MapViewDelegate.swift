@@ -96,7 +96,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
         userInitiatedRegionChange = mapViewRegionDidChangeFromUserInteraction()
 
     }
-    
+
     // The map's region has changed.  If the user initiates the change, then animated is false.
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         // Calculate the scope level.
@@ -123,6 +123,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
             }
         }
     }
+
 }
 
 

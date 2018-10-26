@@ -44,10 +44,6 @@ class MapViewController: UIViewController, MapManager {
         }
     }
     
-    @IBAction func debugPressed(_ sender: Any) {
-        Debug.show(presentingViewController: self)
-    }
-    
     var scopeLevel: Scope.Level = .normal
     var vicinit: ViciniT!
     
@@ -62,7 +58,19 @@ class MapViewController: UIViewController, MapManager {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Debug.setup()
+        /*
+         Wanted to detect rotation of device to set the visibility of the Show Current Location button.  However, in the closure, the mapView isn't
+         reporting on the user's visibility as expected.
+
+        // Detect rotation of device, which might move the user location off screen.
+        NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification,
+                                               object: nil,
+                                               queue: .main,
+                                               using: { notification in
+                                                print( "User visible? \(self.mapView.isUserLocationVisible)")
+                                                self.locationButton.isHidden = !self.mapView.showsUserLocation || self.mapView.isUserLocationVisible
+        })
+         */
 
         // Start functionality.
         vicinit = ViciniT( mapManager: self )

@@ -230,7 +230,7 @@ extension Prediction {
         
         // Display track number if it exists.
         if let platformCode = stop.platformCode  {
-            trackText = "Track \(platformCode)"
+            trackText = "Platform \(platformCode)"
         }
         
         // Nothing in detail?  Return nil

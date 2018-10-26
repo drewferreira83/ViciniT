@@ -102,8 +102,8 @@ open class Query: Hashable, CustomStringConvertible {
     @discardableResult public func resume() -> Bool {
         
         if let url = MURL.makeURL(query: self) {
-            Debug.log( " -> \(self)", toConsole: true, flag: .important)
-            Debug.log( url.relativeString, toConsole: false)
+            Debug.log( " -> \(self)", flag: .important)
+            Debug.log( url.relativeString )
 
             // Update and track Query.
             issued = Date()

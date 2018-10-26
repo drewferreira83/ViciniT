@@ -36,7 +36,7 @@
 		3A4763C2218216070080AEB1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A4763B0218216070080AEB1 /* LaunchScreen.storyboard */; };
 		3A4763C3218216070080AEB1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A4763B2218216070080AEB1 /* Main.storyboard */; };
 		3A4763C5218216240080AEB1 /* ViciniTHelp.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */; };
-		3A4763CA218219030080AEB1 /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4763C9218219030080AEB1 /* Debug.swift */; };
+		3A4763CC21835B1E0080AEB1 /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4763CB21835B1E0080AEB1 /* Debug.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,7 +71,7 @@
 		3A4763B1218216070080AEB1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3A4763B3218216070080AEB1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = ViciniTHelp.rtf; sourceTree = "<group>"; };
-		3A4763C9218219030080AEB1 /* Debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
+		3A4763CB21835B1E0080AEB1 /* Debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Debug.swift; path = Debug/Debug.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,7 +90,6 @@
 			isa = PBXGroup;
 			children = (
 				3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */,
-				3A4763C8218219030080AEB1 /* Debug */,
 				3A476380218215DD0080AEB1 /* MBTAKit */,
 				3A47636A2182157F0080AEB1 /* ViciniT */,
 				3A4763692182157F0080AEB1 /* Products */,
@@ -113,6 +112,7 @@
 				3A4763A9218216060080AEB1 /* Assets.xcassets */,
 				3A4763AF218216070080AEB1 /* Base.lproj */,
 				3A4763A4218216060080AEB1 /* Default.swift */,
+				3A4763CB21835B1E0080AEB1 /* Debug.swift */,
 				3A4763AD218216060080AEB1 /* InfoViewController.swift */,
 				3A4763AC218216060080AEB1 /* MapViewController.swift */,
 				3A4763AB218216060080AEB1 /* MapViewDelegate.swift */,
@@ -171,14 +171,6 @@
 			);
 			name = Base.lproj;
 			path = ../../../../newt2/ViciniT/ViciniT/Base.lproj;
-			sourceTree = "<group>";
-		};
-		3A4763C8218219030080AEB1 /* Debug */ = {
-			isa = PBXGroup;
-			children = (
-				3A4763C9218219030080AEB1 /* Debug.swift */,
-			);
-			path = Debug;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -257,7 +249,6 @@
 				3A476393218215DD0080AEB1 /* Vehicle.swift in Sources */,
 				3A47639F218215DD0080AEB1 /* Route.swift in Sources */,
 				3A476395218215DD0080AEB1 /* MURL.swift in Sources */,
-				3A4763CA218219030080AEB1 /* Debug.swift in Sources */,
 				3A4763B8218216070080AEB1 /* Default.swift in Sources */,
 				3A47639E218215DD0080AEB1 /* Prediction.swift in Sources */,
 				3A47639B218215DD0080AEB1 /* Query Utilities.swift in Sources */,
@@ -275,6 +266,7 @@
 				3A47639A218215DD0080AEB1 /* Schedule.swift in Sources */,
 				3A4763B4218216070080AEB1 /* ViciniT.swift in Sources */,
 				3A4763C0218216070080AEB1 /* InfoViewController.swift in Sources */,
+				3A4763CC21835B1E0080AEB1 /* Debug.swift in Sources */,
 				3A476399218215DD0080AEB1 /* JXObject.swift in Sources */,
 				3A4763B5218216070080AEB1 /* UserSettings.swift in Sources */,
 				3A4763BD218216070080AEB1 /* AppDelegate.swift in Sources */,
@@ -425,6 +417,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YJQHM87BYU;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INFOPLIST_FILE = ViciniT/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -443,6 +436,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YJQHM87BYU;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INFOPLIST_FILE = ViciniT/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

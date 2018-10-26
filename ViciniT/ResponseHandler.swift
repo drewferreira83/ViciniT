@@ -14,7 +14,7 @@ extension ViciniT {
     // NEVER ON THE MAIN THREAD!!!!
     public func process(query: Query) {
         Debug.log( "<-  \(query)", flag: .important )
-        Debug.log( query.url!.relativeString, toConsole: false )
+        Debug.log( query.url!.relativeString )
         
         switch query.kind {
             /*
