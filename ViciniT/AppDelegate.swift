@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  ViciniT
 //
-//  Created by Andrew Ferreira on 10/25/18.
+//  Created by Andrew Ferreira on 8/15/18.
 //  Copyright © 2018 Andrew Ferreira. All rights reserved.
 //
 
@@ -16,6 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+
+
+
         return true
     }
 
