@@ -45,10 +45,6 @@ open class Mark: NSObject, MKAnnotation {
         self.scopeLevel = scopeLevel
 
         super.init()
-
-        if scopeLevel == .unset {
-            Debug.log( "Warning: ScopeLevel unset for \(self)")
-        }
     }
 
     init( vehicle: Vehicle, scopeLevel: Scope.Level = .normal ) {
@@ -63,10 +59,6 @@ open class Mark: NSObject, MKAnnotation {
         self.scopeLevel = scopeLevel
 
         super.init()
-        
-        if scopeLevel == .unset {
-            Debug.log( "Warning: ScopeLevel unset for \(self)")
-        }
     }
     
     deinit {

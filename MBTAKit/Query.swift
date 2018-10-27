@@ -103,7 +103,7 @@ open class Query: Hashable, CustomStringConvertible {
         
         if let url = MURL.makeURL(query: self) {
             Debug.log( " -> \(self)", flag: .important)
-            Debug.log( url.relativeString )
+            //Debug.log( url.relativeString )
 
             // Update and track Query.
             issued = Date()

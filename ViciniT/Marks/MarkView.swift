@@ -57,27 +57,33 @@ class MarkView: MKAnnotationView {
 
         switch (mark.kind) {
         case .stop where mark.isFavorite:
-            newImage = Default.Images.favoriteStop
+            // Favorite Stops...
+            newImage = mark.scopeLevel == .farthest ? Default.Images.favoriteStop20 : Default.Images.favoriteStop24
 
         case .stop:
+            // All other stops...
             // GTFS.locationType .stations means that it is a physical structure or it has children stops.
             let stopType = mark.stop!.locationType
 
             switch mark.scopeLevel {
-            case .normal:
+            case .closest:
                 newImage = stopType == .station ? Default.Images.stop24 : Default.Images.stop18
                 
-            case .medium:
+            case .closer:
+                newImage = stopType == .station ? Default.Images.stop24 : Default.Images.stop12
+                
+            case .normal:
                 newImage = stopType == .station ? Default.Images.stop18 : Default.Images.stop12
                 
-            case .high:
-                newImage =  Default.Images.stop12
-                
-            default:
-                fatalError( "Unsupported Scope.Level for \(mark)" )
+            case .farther:
+                newImage = stopType == .station ? Default.Images.stop18 : Default.Images.stop08
+            
+            case .farthest:
+                newImage = Default.Images.stop12  // No Busses.
             }
             
         case .vehicle:
+            // Vehicles
             newImage = mark.scopeLevel == .normal ? Default.Images.vehicle24 : Default.Images.vehicle12
             newImage = newImage.rotate( byDegrees: mark.rotation)
             
@@ -85,6 +91,7 @@ class MarkView: MKAnnotationView {
             Debug.log("Unexpected mark type. \(self)")
             break
         }
+        
         self.image = newImage
     }
     

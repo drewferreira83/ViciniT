@@ -30,15 +30,21 @@ public struct Default {
     }
     
     public struct Images {
-        public static let favoriteStop = UIImage( named: "favorite-24" )
+        public static let favoriteStop24 = UIImage( named: "favorite-24" )
+        public static let favoriteStop20 = UIImage( named: "favorite-20" )
+
         public static let stop24 = UIImage( named: "stop-24" )
         public static let stop18 = UIImage( named: "stop-18" )
         public static let stop12 = UIImage( named: "stop-12" )
+        public static let stop08 = UIImage( named: "stop-8" )
         
+        public static let vehicle24 = UIImage( named: "vehicle-24" )
+        public static let vehicle18 = UIImage( named: "vehicle-18" )
+        public static let vehicle12 = UIImage( named: "vehicle-12" )
+        public static let vehicle10 = UIImage( named: "vehicle-10" )
+
         public static let favoriteTrue = UIImage( named: "favoriteTrue-26" )
         public static let favoriteFalse = UIImage( named: "favoriteFalse-26" )
-        public static let vehicle24 = UIImage( named: "vehicle-24" )
-        public static let vehicle12 = UIImage( named: "vehicle-12" )
     }
     
     public struct Location {
@@ -151,21 +157,32 @@ extension UIColor {
 }
 
 public struct Scope {
-    //  The raw values are the thresholds used to categorize the span.
-    public enum Level: Double {
-        case high = 0.06
-        case medium = 0.04
-        case normal = 0.00
-        case unset = -1.0
+    //  The raw values are the thresholds (measured in degrees of latitude in the Boston area,
+    //   about 0.02 degrees == 1 mile) used to categorize the span.
+    //  NB: Image assignment is in MarkView code.
+    public enum Level: Int, CaseIterable {
+                        //  Station   Stop
+        case closest    //     0       1
+        case closer     //     0       2
+        case normal     //     1       2
+        case farther    //     1       3
+        case farthest   //     2   Subway and CR only
     }
     
     public static func level(span: MKCoordinateSpan) -> Level {
-        if span.maxDelta > Level.high.rawValue {
-            return .high
-        } else if span.maxDelta > Level.medium.rawValue {
-            return .medium
+        let delta = span.maxDelta
+        
+        if delta < 0.012 {
+            return .closest
+        } else if delta < 0.016 {
+            return .closer
+        } else if delta < 0.020 {
+            return .normal
+        } else if delta < 0.04 {
+            return .farther
         }
-        return .normal
+
+        return .farthest
     }
     
     public static func level(region: MKCoordinateRegion) -> Level {

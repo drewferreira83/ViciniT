@@ -169,7 +169,7 @@ extension ViciniT {
     }
 
     func showStops(region: MKCoordinateRegion) {
-        let kind: Query.Kind = (Scope.level(region: region) == .high) ? .majorStopsInRegion : .allStopsInRegion
+        let kind: Query.Kind = (Scope.level(region: region) == .farthest) ? .majorStopsInRegion : .allStopsInRegion
         let query = Query( kind: kind, data: region )
         
         query.resume()
