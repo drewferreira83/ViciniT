@@ -33,7 +33,7 @@ extension Query {
         
         switch (kind) {
             
-        case .allStopsInRegion, .majorStopsInRegion, .stop, .favoriteStops, .test :
+        case .allStopsInRegion, .majorStopsInRegion, .stop, .theseStops, .test :
             var stops = [Stop]()
             
             // Create the stops in the data block.

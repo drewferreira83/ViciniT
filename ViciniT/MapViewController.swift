@@ -16,7 +16,7 @@ protocol MapManager {
     //    func removeMarks(ofKind: Mark.Kind)
     //    func getMarks(ofKind: Mark.Kind) -> [Mark]
 
-    func display( marks: [Mark], kind: Mark.Kind, region: MKCoordinateRegion?, select: Mark?)
+    func display( marks: [Mark], kind: Mark.Kind, select: Mark?)
     func show( predictions: [Prediction], for stop: Stop )
     func show( routes: [Route], for stop: Stop )
 //    func select( mark: Mark )
@@ -123,35 +123,7 @@ class MapViewController: UIViewController, MapManager {
     func getUserLocation() -> CLLocationCoordinate2D? {
         return locMgr.location?.coordinate
     }
-/*
 
-    // Display these marks, changing the region if passed, selecting a mark if passed.
-    func display( marks: [Mark], region: MKCoordinateRegion? = nil, select: Mark? = nil ) {
-        var oldMarks = [Mark]()
-        
-        for annotation in mapView.annotations {
-            if let mark = annotation as? Mark, !mark.isFavorite {
-                oldMarks.append( mark )
-            }
-        }
-        
-        DispatchQueue.main.async {
-            self.mapView.removeAnnotations(oldMarks)
-            self.mapView.addAnnotations(marks)
-
-            if let region = region {
-                self.mapView.setRegion(region, animated: true)
-            }
-            
-
-            
-            if let selectedMark = select {
-                self.mapView.setCenter( selectedMark.coordinate, animated: true )
-                self.mapView.selectAnnotation(selectedMark, animated: true)
-            }
-        }
-    }
-    */
     
     // Returns the actual MKAnnotation used in the MapView that matches the passed Mark object.
     private func annotationForMark( mark: Mark ) -> MKAnnotation? {
@@ -171,7 +143,7 @@ class MapViewController: UIViewController, MapManager {
     //This method will instruct the mapView to display the passed marks.
     // It will only add new Marks and it will remove any marks of the specified kind
     // that are not in the passed array.
-    func display( marks: [Mark], kind: Mark.Kind = .all, region: MKCoordinateRegion? = nil, select: Mark? = nil ) {
+    func display( marks: [Mark], kind: Mark.Kind, select: Mark? = nil ) {
 
         // Which marks do we need to add to the existing annotations?
         var newMarks = [Mark]()
@@ -193,8 +165,7 @@ class MapViewController: UIViewController, MapManager {
         for annotation in mapView.annotations {
             if let existingMark = annotation as? Mark {
                 // Does this Mark match the kind AND is not in the passed array of marks?
-                // Never remove favorite stops.
-                if !existingMark.isFavorite && existingMark.kind == kind &&
+                if existingMark.kind == kind &&
                     (!marks.contains {
                         mark in
                         return mark == existingMark }) {
@@ -207,13 +178,10 @@ class MapViewController: UIViewController, MapManager {
         DispatchQueue.main.async {
             self.mapView.removeAnnotations(removeMarks)
             self.mapView.addAnnotations(newMarks)
-            
-            if let region = region {
-                self.mapView.setRegion(region, animated: true)
-            }
-            
+
             if let markToSelect = select {
-                self.mapView.setCenter( markToSelect.coordinate, animated: true )
+                self.mapView.showAnnotations(newMarks, animated: true)
+                //self.mapView.setCenter( markToSelect.coordinate, animated: true )
                 
                 if let annotation = self.annotationForMark(mark: markToSelect) {
                     self.mapView.selectAnnotation(annotation, animated: true)

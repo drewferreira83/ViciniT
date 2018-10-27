@@ -36,7 +36,7 @@ public class ViciniT: NSObject, QueryListener {
     
     func showFavorites() {
         // GOAL:  Create a region that includes all favorites.
-        let query = Query(kind: .favoriteStops, data: Array(UserSettings.shared.favoriteStops))
+        let query = Query(kind: .theseStops, data: Array(UserSettings.shared.favoriteStops))
         query.resume()
     }
 }

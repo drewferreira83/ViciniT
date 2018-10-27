@@ -42,7 +42,7 @@ open class Query: Hashable, CustomStringConvertible {
         case majorStopsInRegion    // Only stations
         case trips
         case vehicles
-        case favoriteStops   // No parameters
+        case theseStops   // No parameters
         
         case test
         case outstanding  // Check queries that haven't returned.

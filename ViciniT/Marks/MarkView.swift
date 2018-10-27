@@ -86,10 +86,6 @@ class MarkView: MKAnnotationView {
             // Vehicles
             newImage = mark.scopeLevel == .normal ? Default.Images.vehicle24 : Default.Images.vehicle12
             newImage = newImage.rotate( byDegrees: mark.rotation)
-            
-        default:
-            Debug.log("Unexpected mark type. \(self)")
-            break
         }
         
         self.image = newImage

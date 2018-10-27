@@ -12,7 +12,7 @@ import MapKit
 
 open class Mark: NSObject, MKAnnotation {
     enum Kind: String {
-        case stop, vehicle, all
+        case stop, vehicle
     }
 
     public let coordinate: CLLocationCoordinate2D
@@ -24,12 +24,22 @@ open class Mark: NSObject, MKAnnotation {
     public let stop: Stop?
     public let vehicle: Vehicle?
     
+    public var id: String {
+        switch kind {
+        case .stop:
+            return stop!.id
+            
+        case .vehicle:
+            return vehicle!.id
+        }
+    }
+    
     var isFavorite: Bool {
         get {
             return stop?.isFavorite ?? false
         }
     }
-    var image: UIImage?
+//    var image: UIImage?
     var kind: Kind
     var rotation: Int = 0
 
@@ -60,12 +70,13 @@ open class Mark: NSObject, MKAnnotation {
 
         super.init()
     }
-    
+/*
     deinit {
-        // Should Stop and Vehicle also be set to nil?
         image = nil
+        stop = nil
+        vehicle = nil
     }
-    
+ */
     override open var description: String {
         return( "(Mark:\(kind) \"\(title ?? "No title")\" super[\(super.description)])")
     }

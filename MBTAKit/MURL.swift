@@ -25,8 +25,9 @@ internal class MURL {
         
         switch ( query.kind )
         {
+            /*
         case .stop:
-            // Single Stop
+            // Specific stops
             guard let stopID = query.data as? String else {
                 fatalError( "Stop Query requires a valid list of stop IDs. \(String(describing:query.data))" )
             }
@@ -35,14 +36,15 @@ internal class MURL {
             baseString.append( MBTA_KEY )
             baseString.append( "&include=parent_station" )
             baseString.append( "&filter[id]=\(stopID.forURL)")
+ */
 
-        case .favoriteStops:
+        case .theseStops:
             guard let idArray = query.data as? [String] else {
-                fatalError( "FavoriteStops query requires an array of stop IDs  \(String(describing:query.data))" )
+                fatalError( "TheseStops query requires an array of stop IDs  \(String(describing:query.data))" )
             }
 
             guard !idArray.isEmpty else {
-                fatalError( "FavoriteStops query requires at least one stop ID" )
+                fatalError( "TheseStops query requires at least one stop ID" )
             }
             
             baseString.append( "/stops")
