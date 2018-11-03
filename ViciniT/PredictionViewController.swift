@@ -10,9 +10,9 @@ import UIKit
 
 class PredictionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     // This favoriteButton is different from the one on the main mapView.
-    @IBOutlet weak var toggleFavoriteButton: UIButton!
     @IBOutlet weak var predictionTable: UITableView!
-
+    @IBOutlet weak var favoriteButton: UIBarButtonItem!
+    
     @IBAction func donePressed(_ sender: Any) {
         navigationController?.dismiss(animated: true, completion: nil)
     }
@@ -67,8 +67,9 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func updateFavoriteButton() {
         let img = stop.isFavorite ? Default.Images.favoriteTrue : Default.Images.favoriteFalse
-        toggleFavoriteButton.setImage( img, for: .normal)
+        favoriteButton.image = img
     }
+    
     /*
     @IBAction func dismissPredictions(_ sender: UIButton ) {
         dismiss( animated: true, completion: nil )

@@ -43,8 +43,8 @@ public struct Default {
         public static let vehicle12 = UIImage( named: "vehicle-12" )
         public static let vehicle10 = UIImage( named: "vehicle-10" )
 
-        public static let favoriteTrue = UIImage( named: "favoriteTrue-26" )
-        public static let favoriteFalse = UIImage( named: "favoriteFalse-26" )
+        public static let favoriteTrue = UIImage( named: "barButton.favorite.true" )
+        public static let favoriteFalse = UIImage( named: "barButton.favorite.false" )
     }
     
     public struct Location {

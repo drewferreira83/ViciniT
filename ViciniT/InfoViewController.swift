@@ -36,4 +36,8 @@ class InfoViewController: UIViewController {
     }
     */
 
+    @IBAction func unwindToInfo(sender: UIStoryboardSegue) {
+        
+    }
+    
 }
