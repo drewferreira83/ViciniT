@@ -37,6 +37,7 @@
 		3A4763C3218216070080AEB1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A4763B2218216070080AEB1 /* Main.storyboard */; };
 		3A4763C5218216240080AEB1 /* ViciniTHelp.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */; };
 		3A4763CC21835B1E0080AEB1 /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4763CB21835B1E0080AEB1 /* Debug.swift */; };
+		3AFDF6F8218F41C9009B79FF /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFDF6F7218F41C9009B79FF /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,6 +73,7 @@
 		3A4763B3218216070080AEB1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = ViciniTHelp.rtf; sourceTree = "<group>"; };
 		3A4763CB21835B1E0080AEB1 /* Debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Debug.swift; path = Debug/Debug.swift; sourceTree = SOURCE_ROOT; };
+		3AFDF6F7218F41C9009B79FF /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +122,7 @@
 				3A4763AE218216070080AEB1 /* PredictionCell.swift */,
 				3A4763A3218216060080AEB1 /* PredictionViewController.swift */,
 				3A4763A2218216060080AEB1 /* ResponseHandler.swift */,
+				3AFDF6F7218F41C9009B79FF /* SettingsViewController.swift */,
 				3A4763A1218216060080AEB1 /* UserSettings.swift */,
 				3A4763A0218216060080AEB1 /* ViciniT.swift */,
 				3A4763772182157F0080AEB1 /* Info.plist */,
@@ -270,6 +273,7 @@
 				3A476399218215DD0080AEB1 /* JXObject.swift in Sources */,
 				3A4763B5218216070080AEB1 /* UserSettings.swift in Sources */,
 				3A4763BD218216070080AEB1 /* AppDelegate.swift in Sources */,
+				3AFDF6F8218F41C9009B79FF /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

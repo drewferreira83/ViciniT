@@ -10,7 +10,7 @@ import Foundation
 import MapKit
 
 // TODO:  This can be made into Query extension.
-internal class MURL {
+extension Query {
     // Unprocessed MBTA URL looks like
     // https://api-v3.mbta.com/  stops     ?api_key=123   &filter[latitude]=42.3601    &filter[longitude]=-71.0589
     //  URL_HEAD +              Command +   MBTA_KEY     { + Filter                      + Filter ...  }
@@ -20,23 +20,32 @@ internal class MURL {
     static let URL_HEAD = "https://api-v3.mbta.com"
     static let MBTA_KEY = "?api_key=0de754c34a1445aeac7cbc2c385ef0ae"
     
+    // If routeTypes is nil, no routeType filter is used.  Otherwise, include GTFS.RouteTypes where True is in the
+    // corresponding position in the array.
+    //  e.g. [F,F,T,F,F] means Commuter Rail only. (index 2 = GTFS.RouteType = CommuterRail)
+    static var routeTypes: [Bool]?
+
     static func makeURL(query: Query) -> URL? {
         var baseString: String = URL_HEAD
         
+        // Make a route filter if set
+        var typeFilterString = ""
+        
+        if routeTypes != nil {
+            var validTypes = [String]()
+            for i in 0 ..< routeTypes!.count {
+                if routeTypes![i] {
+                    validTypes.append( String(i) )
+                }
+            }
+            
+            if !validTypes.isEmpty {
+                typeFilterString = "&filter[route_type]=\(validTypes.joined( separator: "," ))"
+            }
+        }
+        
         switch ( query.kind )
         {
-            /*
-        case .stop:
-            // Specific stops
-            guard let stopID = query.data as? String else {
-                fatalError( "Stop Query requires a valid list of stop IDs. \(String(describing:query.data))" )
-            }
-
-            baseString.append( "/stops")
-            baseString.append( MBTA_KEY )
-            baseString.append( "&include=parent_station" )
-            baseString.append( "&filter[id]=\(stopID.forURL)")
- */
 
         case .theseStops:
             guard let idArray = query.data as? [String] else {
@@ -65,11 +74,12 @@ internal class MURL {
             
             baseString.append( "/stops")
             baseString.append( MBTA_KEY )
-           // baseString.append( "&sort=location_type" )
             baseString.append( "&include=parent_station" )
             
             if query.kind == .majorStopsInRegion {
                 baseString.append( "&filter[route_type]=0,1,2" )
+            } else {
+                baseString.append( typeFilterString )
             }
 
             let center = region.center
@@ -177,6 +187,7 @@ internal class MURL {
         return  url
         
     }
+    
 }
 
 extension String {
@@ -185,6 +196,7 @@ extension String {
         return self.addingPercentEncoding( withAllowedCharacters: .urlQueryAllowed) ?? "error"
     }
 }
+
 extension MKCoordinateSpan {
     // Return the larger of the width or height of the region.
     public var maxDelta: Double {

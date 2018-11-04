@@ -45,6 +45,13 @@ public struct Default {
 
         public static let favoriteTrue = UIImage( named: "barButton.favorite.true" )
         public static let favoriteFalse = UIImage( named: "barButton.favorite.false" )
+        
+        public static let subwayTrue = UIImage( named: "button.subway.true" )
+        public static let subwayFalse = UIImage( named: "button.subway.false" )
+        public static let commRailTrue = UIImage( named: "button.commRail.true" )
+        public static let commRailFalse = UIImage( named: "button.commRail.false" )
+        public static let busTrue = UIImage( named: "button.bus.true" )
+        public static let busFalse = UIImage( named: "button.bus.false" )
     }
     
     public struct Location {
@@ -117,7 +124,15 @@ public struct GTFS {
         case contactAgency = 2
         case contactDriver = 3
     }
-  
+    
+    public enum RouteType: Int, CaseIterable {
+        case lightRail
+        case subway
+        case commuterRail
+        case bus
+        case ferry
+    }
+    
 }
 
 extension UIColor {

@@ -32,7 +32,7 @@ class UserSettings: NSObject {
         var shows3DView           = false
         var allowsRotation        = false
     }
-    
+
     private var defaults = UserDefaults.standard
 
     var mapOptions: MapOptions {
@@ -47,6 +47,17 @@ class UserSettings: NSObject {
     
     override private init() {
         super.init()
+    }
+    
+    // A value of nil means to include all routes!
+    var routeTypes: [Bool]? {
+        get {
+            return defaults.array(forKey: "routeTypes" ) as? [Bool]
+        }
+        
+        set (value) {
+            defaults.set( value, forKey: "routeTypes" )
+        }
     }
     
     var favoriteStops: Set<String> {

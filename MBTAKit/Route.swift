@@ -10,15 +10,14 @@ import Foundation
 import UIKit
 
 public class Route: HasID {
+    
     public enum Mode: Int {
-        case unknown = -1
-
-        case lightRail = 0
-        case heavyRail = 1
+        case subway = 0
+        case bus = 1
         case commuterRail = 2
-        case bus = 3
-        case ferry = 4
+        case ferry = 3
     }
+    
     
     public static let Unknown = Route()
     
@@ -34,7 +33,7 @@ public class Route: HasID {
     }
     
     public let about: String
-    public let type: Mode
+    public let type: GTFS.RouteType?
     public let shortName: String
     public let longName: String
     public let color: UIColor
@@ -45,8 +44,12 @@ public class Route: HasID {
     
     // Full Name is a user readable string that completely declares the route.
     public var fullName: String {
+        guard let type = type else {
+            return "Unknown Route"
+        }
+        
         switch type {
-        case .lightRail, .heavyRail, .commuterRail:
+        case .lightRail, .subway, .commuterRail:
             return( longName )
         case .bus, .ferry:
             // The shortName is empty for Silver Line buses between South Station and Silver Line Way
@@ -54,8 +57,6 @@ public class Route: HasID {
                 return longName
             }
             return( "\(shortName): \(longName)")
-        default:
-            return "Invalid Route Type:\(type)"
         }
     }
     
@@ -68,6 +69,10 @@ public class Route: HasID {
     public var abbreviatedName: String {
         var plainName: String
         
+        guard let type = type else {
+            return "???"
+        }
+        
         switch type {
         case .bus, .lightRail:
             if id == "Mattapan" {
@@ -76,7 +81,7 @@ public class Route: HasID {
             }
             plainName = shortName
             
-        case .heavyRail:
+        case .subway:
             plainName = id
             
         case .commuterRail:
@@ -95,9 +100,6 @@ public class Route: HasID {
                 Debug.log( ".ferry ID not in expected form. \(self)")
                 plainName = longName
             }
-            
-        default:
-            plainName = "???"
         }
         
         return plainName
@@ -114,14 +116,14 @@ public class Route: HasID {
     
     private init() {
         about = "Unknown Route"
-        type = Mode.unknown
         shortName = "Route?"
+        type = nil
         longName = "Unknown Route"
         color = UIColor.white
         textColor = UIColor.red
         directions = ["Unknown Source", "Unknown Sink"]
         _isUnknown = true
-        self.textAttrs = [ NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.backgroundColor: color ]
+        textAttrs = [ NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.backgroundColor: color ]
         sortOrder = -1
         
         super.init(id: "route.unknown")
@@ -133,7 +135,7 @@ public class Route: HasID {
         }
         
         self.about = attributes.description
-        self.type = Mode( rawValue: attributes.type ) ?? .unknown
+        self.type = GTFS.RouteType( rawValue: attributes.type )
         self.color = UIColor( hex: attributes.color )
         self.textColor = UIColor( hex: attributes.text_color)
         self.shortName = attributes.short_name
