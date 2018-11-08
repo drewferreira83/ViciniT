@@ -15,23 +15,31 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     
     @IBAction func donePressed(_ sender: Any) {
         navigationController?.dismiss(animated: true, completion: nil)
+        stop = nil
     }
     
     // The user toggled the favorite in the Nav Controller of the Predictions View.
     @IBAction func toggleFavorite(_ sender: Any) {
+        guard let stop = stop else {
+            return
+        }
         stop.isFavorite = !stop.isFavorite
         updateFavoriteButton()
     }
     
     @IBAction func reloadPressed(_ sender: Any) {
+        guard let stop = stop else {
+            return
+        }
+
         // Get predictions
-        let query =  Query(kind: .predictions, data: stop )
+       let query =  Query(kind: .predictions, data: stop )
         query.resume()
     }
     
-    var offScreenFrame: CGRect!
-    var onScreenFrame: CGRect!
-    var stop: Stop = Stop.Unknown
+    //var offScreenFrame: CGRect!
+    //var onScreenFrame: CGRect!
+    var stop: Stop?
     
     // Predictions should already be sorted by route and departure time.
     // Currently discarding arrival times...
@@ -66,15 +74,13 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func updateFavoriteButton() {
+        guard let stop = stop else {
+            return
+        }
+        
         let img = stop.isFavorite ? Default.Images.favoriteTrue : Default.Images.favoriteFalse
         favoriteButton.image = img
     }
-    
-    /*
-    @IBAction func dismissPredictions(_ sender: UIButton ) {
-        dismiss( animated: true, completion: nil )
-    }
- */
     
     override func viewWillAppear(_ animated: Bool) {
         predictionTable.reloadData()

@@ -108,7 +108,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
             vicinit.showStops( region: mapView.region)
         }
 
-        locationButton.isHidden =  !mapView.showsUserLocation || mapView.isUserLocationVisible
+        updateLocationButton()
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {

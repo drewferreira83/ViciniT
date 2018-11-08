@@ -26,6 +26,8 @@ protocol MapManager {
 
 class MapViewController: UIViewController, MapManager {
     
+    static public var shared: MapViewController!
+    
     @IBOutlet weak var locationButton: UIButton!
     @IBOutlet weak var favoriteButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
@@ -56,6 +58,8 @@ class MapViewController: UIViewController, MapManager {
     var forceShowStops = false
     
     override func viewDidLoad() {
+        MapViewController.shared = self
+        
         super.viewDidLoad()
         
         /*
@@ -246,6 +250,16 @@ class MapViewController: UIViewController, MapManager {
         super.viewWillAppear(animated)
         selectedMarkView?.prepareForDisplay()
         favoriteButton.isHidden = UserSettings.shared.favoriteStops.isEmpty
+    }
+    
+    func didBecomeActive() {
+        print( "MapViewDidBecomeActive" )
+        predictionsViewController.reloadPressed( self )
+        updateLocationButton()
+    }
+    
+    func updateLocationButton() {
+        locationButton.isHidden =  !mapView.showsUserLocation || mapView.isUserLocationVisible
     }
     
     // Closing the predictionViewController DOES NOT call this stub.
