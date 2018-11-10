@@ -58,7 +58,7 @@ class MarkView: MKAnnotationView {
         switch (mark.kind) {
         case .stop where mark.isFavorite:
             // Favorite Stops...
-            newImage = mark.scopeLevel == .farthest ? Default.Images.favoriteStop20 : Default.Images.favoriteStop24
+            newImage = mark.scopeLevel == .farthest ? Images.favoriteStop20 : Images.favoriteStop24
 
         case .stop:
             // All other stops...
@@ -67,24 +67,24 @@ class MarkView: MKAnnotationView {
 
             switch mark.scopeLevel {
             case .closest:
-                newImage = stopType == .station ? Default.Images.stop24 : Default.Images.stop18
+                newImage = stopType == .station ? Images.stop24 : Images.stop18
                 
             case .closer:
-                newImage = stopType == .station ? Default.Images.stop24 : Default.Images.stop12
+                newImage = stopType == .station ? Images.stop24 : Images.stop12
                 
             case .normal:
-                newImage = stopType == .station ? Default.Images.stop18 : Default.Images.stop12
+                newImage = stopType == .station ? Images.stop18 : Images.stop12
                 
             case .farther:
-                newImage = stopType == .station ? Default.Images.stop18 : Default.Images.stop08
+                newImage = stopType == .station ? Images.stop18 : Images.stop08
             
             case .farthest:
-                newImage = Default.Images.stop12  // No Busses.
+                newImage = Images.stop12  // No Busses.
             }
             
         case .vehicle:
             // Vehicles
-            newImage = mark.scopeLevel == .normal ? Default.Images.vehicle24 : Default.Images.vehicle12
+            newImage = mark.scopeLevel == .normal ? Images.vehicle24 : Images.vehicle12
             newImage = newImage.rotate( byDegrees: mark.rotation)
         }
         

@@ -28,36 +28,36 @@ public struct Default {
         
         public static let monospaced = UIFont(name: "Courier New", size: 12) ?? UIFont.systemFont(ofSize: 12)
     }
-    
-    public struct Images {
-        public static let favoriteStop24 = UIImage( named: "favorite-24" )
-        public static let favoriteStop20 = UIImage( named: "favorite-20" )
-
-        public static let stop24 = UIImage( named: "stop-24" )
-        public static let stop18 = UIImage( named: "stop-18" )
-        public static let stop12 = UIImage( named: "stop-12" )
-        public static let stop08 = UIImage( named: "stop-8" )
-        
-        public static let vehicle24 = UIImage( named: "vehicle-24" )
-        public static let vehicle18 = UIImage( named: "vehicle-18" )
-        public static let vehicle12 = UIImage( named: "vehicle-12" )
-        public static let vehicle10 = UIImage( named: "vehicle-10" )
-
-        public static let favoriteTrue = UIImage( named: "barButton.favorite.true" )
-        public static let favoriteFalse = UIImage( named: "barButton.favorite.false" )
-        
-        public static let subwayTrue = UIImage( named: "button.subway.true" )
-        public static let subwayFalse = UIImage( named: "button.subway.false" )
-        public static let commRailTrue = UIImage( named: "button.commRail.true" )
-        public static let commRailFalse = UIImage( named: "button.commRail.false" )
-        public static let busTrue = UIImage( named: "button.bus.true" )
-        public static let busFalse = UIImage( named: "button.bus.false" )
-    }
-    
+ 
     public struct Location {
         public static let BOSTON = CLLocationCoordinate2D( latitude: 42.36, longitude: -71.062)
         public static let DAVIS = CLLocationCoordinate2D( latitude: 42.40, longitude: -71.122299)
     }
+}
+
+public struct Images {
+    public static let favoriteStop24 = UIImage( named: "favorite-24" )
+    public static let favoriteStop20 = UIImage( named: "favorite-20" )
+    
+    public static let stop24 = UIImage( named: "stop-24" )
+    public static let stop18 = UIImage( named: "stop-18" )
+    public static let stop12 = UIImage( named: "stop-12" )
+    public static let stop08 = UIImage( named: "stop-8" )
+    
+    public static let vehicle24 = UIImage( named: "vehicle-24" )
+    public static let vehicle18 = UIImage( named: "vehicle-18" )
+    public static let vehicle12 = UIImage( named: "vehicle-12" )
+    public static let vehicle10 = UIImage( named: "vehicle-10" )
+    
+    public static let favoriteTrue = UIImage( named: "barButton.favorite.true" )
+    public static let favoriteFalse = UIImage( named: "barButton.favorite.false" )
+    
+    public static let subwayTrue = UIImage( named: "button.subway.true" )
+    public static let subwayFalse = UIImage( named: "button.subway.false" )
+    public static let commRailTrue = UIImage( named: "button.commRail.true" )
+    public static let commRailFalse = UIImage( named: "button.commRail.false" )
+    public static let busTrue = UIImage( named: "button.bus.true" )
+    public static let busFalse = UIImage( named: "button.bus.false" )
 }
 
 public typealias AttrDict = [NSAttributedString.Key: Any]
@@ -125,6 +125,7 @@ public struct GTFS {
         case contactDriver = 3
     }
     
+    // To the user, SUBWAY = (lightRail + subway).  No distinction between the two.
     public enum RouteType: Int, CaseIterable {
         case lightRail
         case subway
@@ -132,7 +133,6 @@ public struct GTFS {
         case bus
         case ferry
     }
-    
 }
 
 extension UIColor {
@@ -204,4 +204,3 @@ public struct Scope {
         return( level( span: region.span ) )
     }
 }
-

@@ -9,15 +9,7 @@
 import Foundation
 import UIKit
 
-public class Route: HasID {
-    
-    public enum Mode: Int {
-        case subway = 0
-        case bus = 1
-        case commuterRail = 2
-        case ferry = 3
-    }
-    
+public class Route: HasID {    
     
     public static let Unknown = Route()
     

@@ -44,6 +44,8 @@ open class Query: Hashable, CustomStringConvertible {
         case vehicles
         case theseStops   // No parameters
         
+        case stopsOfRouteType
+        
         case test
         case outstanding  // Check queries that haven't returned.
     }

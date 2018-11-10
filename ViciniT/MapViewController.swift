@@ -253,7 +253,6 @@ class MapViewController: UIViewController, MapManager {
     }
     
     func didBecomeActive() {
-        print( "MapViewDidBecomeActive" )
         predictionsViewController.reloadPressed( self )
         updateLocationButton()
     }

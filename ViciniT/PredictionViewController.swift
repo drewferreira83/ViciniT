@@ -78,7 +78,7 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
             return
         }
         
-        let img = stop.isFavorite ? Default.Images.favoriteTrue : Default.Images.favoriteFalse
+        let img = stop.isFavorite ? Images.favoriteTrue : Images.favoriteFalse
         favoriteButton.image = img
     }
     

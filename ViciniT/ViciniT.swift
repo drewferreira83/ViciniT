@@ -13,14 +13,12 @@ public class ViciniT: NSObject, QueryListener {
     static public var share: ViciniT!
     
     var routeDict = [String: Route]()
-    var lastLocation: CLLocationCoordinate2D?
     
     let map: MapManager!
     
     init( mapManager: MapManager ) {
         self.map = mapManager
         super.init()
-
         
         Query.listener = self
         ViciniT.share = self

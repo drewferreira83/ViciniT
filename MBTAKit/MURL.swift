@@ -33,6 +33,7 @@ extension Query {
         
         if routeTypes != nil {
             var validTypes = [String]()
+            
             for i in 0 ..< routeTypes!.count {
                 if routeTypes![i] {
                     validTypes.append( String(i) )
@@ -60,6 +61,17 @@ extension Query {
             baseString.append( MBTA_KEY )
             baseString.append( "&include=parent_station" )
             baseString.append( "&filter[id]=\(idArray.joined(separator: ","))")
+            
+        
+        case .stopsOfRouteType:
+            guard let routeTypesList = query.data as? String else {
+                fatalError( "StopsOfType query requires a string \(String(describing:query.data))" )
+            }
+            
+            baseString.append( "/stops")
+            baseString.append( MBTA_KEY )
+            baseString.append( "&include=parent_station" )
+            baseString.append( "&filter[id]=\(routeTypesList)")
 
 /*
         case .test:

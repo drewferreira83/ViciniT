@@ -57,6 +57,7 @@ class UserSettings: NSObject {
         
         set (value) {
             defaults.set( value, forKey: "routeTypes" )
+            Query.routeTypes = value
         }
     }
     
