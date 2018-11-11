@@ -105,7 +105,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
         // Update the stops, if appropriate.
         if userInitiatedRegionChange || forceShowStops {
             forceShowStops = false
-            vicinit.showStops( region: mapView.region)
+            refreshStops()
         }
 
         updateLocationButton()
@@ -113,13 +113,15 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         // Show the user only if we are authorized.
-        let showUser = (status == .authorizedWhenInUse || status == .authorizedAlways)
+        let showUser = (status == .authorizedWhenInUse || status == .authorizedAlways) && UserSettings.shared.trackUser
         
         DispatchQueue.main.async {
             self.mapView.showsUserLocation = showUser
+
             if let newCenter = self.locMgr.location?.coordinate {
                 self.forceShowStops = true
                 self.mapView.setCenter( newCenter, animated: true )
+                self.updateLocationButton()
             }
         }
     }
@@ -168,10 +170,4 @@ extension ViciniT {
         
     }
 
-    func showStops(region: MKCoordinateRegion) {
-        let kind: Query.Kind = (Scope.level(region: region) == .farthest) ? .majorStopsInRegion : .allStopsInRegion
-        let query = Query( kind: kind, data: region )
-        
-        query.resume()
-    }
 }

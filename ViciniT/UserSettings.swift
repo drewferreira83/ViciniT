@@ -50,9 +50,10 @@ class UserSettings: NSObject {
     }
     
     // A value of nil means to include all routes!
-    var routeTypes: [Bool]? {
+    var routeTypes: [Bool] {
         get {
-            return defaults.array(forKey: "routeTypes" ) as? [Bool]
+            let boolArray = defaults.array(forKey: "routeTypes" ) as? [Bool]
+            return boolArray ?? Array<Bool>(repeating: true, count: 5)
         }
         
         set (value) {
@@ -61,6 +62,19 @@ class UserSettings: NSObject {
         }
     }
     
+    var trackUser: Bool {
+        set (value) {
+            defaults.set( value, forKey: "trackUser" )
+        }
+            
+        get {
+            // Note that defaults.bool() returns false if no key exists.
+            // Want to default to true if it doesn't exist, so use defaults.object() as? Bool instead.
+            return defaults.object(forKey: "trackUser") as? Bool ?? true
+        }
+    }
+    
+    //  FAVORITE STOPS
     var favoriteStops: Set<String> {
         set (value) {
             defaults.set( Array(value), forKey: "favoriteStops" )

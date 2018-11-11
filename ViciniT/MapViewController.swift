@@ -56,11 +56,15 @@ class MapViewController: UIViewController, MapManager {
     
     var userInitiatedRegionChange = false
     var forceShowStops = false
+    var refreshStopsOnReturn  = false
     
     override func viewDidLoad() {
         MapViewController.shared = self
         
         super.viewDidLoad()
+        
+        // Not 100%sure what register does, it is new with iOS 11...
+        mapView.register(MarkView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         
         /*
          Wanted to detect rotation of device to set the visibility of the Show Current Location button.  However, in the closure, the mapView isn't
@@ -77,6 +81,7 @@ class MapViewController: UIViewController, MapManager {
          */
 
         // Start functionality.
+        Query.routeTypes = UserSettings.shared.routeTypes
         vicinit = ViciniT( mapManager: self )
         mapView.delegate = self
         locationButton.isHidden = true
@@ -253,18 +258,35 @@ class MapViewController: UIViewController, MapManager {
     }
     
     func didBecomeActive() {
-        predictionsViewController.reloadPressed( self )
+        predictionsViewController.reloadPressed( self ) // NOOP if predictions isn't up
         updateLocationButton()
     }
     
     func updateLocationButton() {
-        locationButton.isHidden =  !mapView.showsUserLocation || mapView.isUserLocationVisible
+        // Hide the location button if any is true:
+        //   MapView isn't showing user location (this covers the permission disallowed situation)
+        //   The user location is currently visible
+        //   The option to track the user is off
+        locationButton.isHidden =  !mapView.showsUserLocation || mapView.isUserLocationVisible || !UserSettings.shared.trackUser
     }
     
-    // Closing the predictionViewController DOES NOT call this stub.
     @IBAction func returnToMap( _ sender: UIStoryboardSegue? ) {
+        // User might have changed tracking flag.
+        mapView.showsUserLocation = UserSettings.shared.trackUser
+        updateLocationButton()
+        
+        if refreshStopsOnReturn {
+            refreshStopsOnReturn = false
+            refreshStops()
+        }
     }
  
+    func refreshStops() {
+        let kind: Query.Kind = scopeLevel == .farthest ? .majorStopsInRegion : .allStopsInRegion
+        let query = Query(kind: kind, data: mapView.region)
+        query.resume()
+    }
+    
     /*
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear( animated )

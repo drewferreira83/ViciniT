@@ -56,6 +56,8 @@ extension ViciniT {
                 }
             }
             
+            print( "Marks: \(marks.count), scope: \(scopeLevel)")
+            
             // Does not change region, does not select anything. Doesn't affect any vehicles.
             map.display(marks: marks, kind: .stop, select: nil )
             

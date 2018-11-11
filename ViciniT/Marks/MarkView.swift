@@ -34,6 +34,7 @@ class MarkView: MKAnnotationView {
         routeLabel.numberOfLines = 0
         routeLabel.lineBreakMode = .byWordWrapping
         rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
