@@ -14,6 +14,10 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var favoriteButton: UIBarButtonItem!
     
     @IBAction func donePressed(_ sender: Any) {
+        dismiss()
+    }
+    
+    private func dismiss() {
         navigationController?.dismiss(animated: true, completion: nil)
         stop = nil
     }
@@ -37,8 +41,7 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
         query.resume()
     }
     
-    //var offScreenFrame: CGRect!
-    //var onScreenFrame: CGRect!
+    // The current stop.
     var stop: Stop?
     
     // Predictions should already be sorted by route and departure time.
@@ -119,6 +122,7 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
         cell.titleLabel.attributedText = prediction.attributedText
         cell.timeFieldLabel.attributedText = prediction.attributedTime
         cell.backgroundColor = prediction.dir == 0 ? prediction.route.color.lighten() : tableView.backgroundColor
+        cell.vehicleExistsImage.isHidden = (prediction.vehicle == nil)
 
         return cell
     }
@@ -159,16 +163,31 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
         guard let prediction = predsForRoute.get( index: indexPath.row ) else {
             fatalError( "No such row. \(indexPath)")
         }
+
+
+        let query = Query(kind: .vehicles, data: prediction.route)
+        query.resume()
         
+        dismiss()
+/*
         // As a test, create a vehicle mark and display it.
         if let vehicleID = prediction.vehicleID {
             let query = Query(kind: .vehicles, data: vehicleID )
             query.resume()
+            dismiss()
         } else {
             Debug.log( "Prediction has no vehicle ID. \(prediction)")
         }
+
+
+*/
     }
 
+    public override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print( "PREPARE!  \(segue) " )
+        if segue.identifier == "" {
+        }
+    }
 }
 
 //  Supoport to display a Prediction in the tableView.

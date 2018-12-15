@@ -16,6 +16,7 @@ protocol MapManager {
     //    func removeMarks(ofKind: Mark.Kind)
     //    func getMarks(ofKind: Mark.Kind) -> [Mark]
 
+    func ensureVisible( marks: [Mark])
     func display( marks: [Mark], kind: Mark.Kind, select: Mark?)
     func show( predictions: [Prediction], for stop: Stop )
     func show( routes: [Route], for stop: Stop )
@@ -56,7 +57,7 @@ class MapViewController: UIViewController, MapManager {
     
     var userInitiatedRegionChange = false
     var forceShowStops = false
-    var refreshStopsOnReturn  = false
+    var refreshStopsOnReturn = false
     
     override func viewDidLoad() {
         MapViewController.shared = self
@@ -232,6 +233,11 @@ class MapViewController: UIViewController, MapManager {
         }
     }
    
+    // Move the map regiom so that these marks are visible
+    func ensureVisible(marks: [Mark]) {
+        mapView.showAnnotations(marks, animated: true)
+    }
+    
     // TODO:  Implement UI to change settings.
     func set( mapOptions: UserSettings.MapOptions ) {
         // Not changable.
@@ -275,6 +281,7 @@ class MapViewController: UIViewController, MapManager {
         mapView.showsUserLocation = UserSettings.shared.trackUser
         updateLocationButton()
         
+        // Should the stops be refreshed?
         if refreshStopsOnReturn {
             refreshStopsOnReturn = false
             refreshStops()

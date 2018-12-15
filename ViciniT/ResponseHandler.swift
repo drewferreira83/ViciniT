@@ -130,8 +130,8 @@ extension ViciniT {
                 marks.append( Mark(vehicle: vehicle ) )
             }
             
-            map.display(marks: marks, kind: .vehicle, select: nil )
-            
+            map.display(marks: marks, kind: .vehicle, select: marks[0] )
+//            map.ensureVisible(marks: marks)
         case .predictions:
             guard let predictions = query.response as? [Prediction] else {
                 fatalError( "/predictions returned something unexpected. \(query)")

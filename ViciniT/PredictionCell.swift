@@ -11,6 +11,7 @@ import UIKit
 class PredictionCell: UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var timeFieldLabel: UILabel!
+    @IBOutlet weak var vehicleExistsImage: UIImageView!
     
     /*
     override func awakeFromNib() {
