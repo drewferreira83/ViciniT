@@ -82,6 +82,7 @@ open class Prediction: HasID, Comparable {
     public var schedule = Schedule.Unknown
     public var vehicle: Vehicle?
     
+    
     public var arrival: Date?
     public var departure: Date?
     public var stopSequence: Int

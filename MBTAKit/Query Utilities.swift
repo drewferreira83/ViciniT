@@ -9,7 +9,7 @@
 import Foundation
 
 extension Query {
-    func responseHandler( _ data: Data?, response: URLResponse?, error: Error? ) -> Void {
+    func MBTAresponseHandler( _ data: Data?, response: URLResponse?, error: Error? ) -> Void {
         guard error == nil else {
             Debug.log( "Handler got error \(error!.localizedDescription)")
             return
@@ -21,6 +21,16 @@ extension Query {
 
         received = Date()
         
+        /*
+        // Determine server time
+         // NOT SURE IF THIS MATTERS!  Might be significant if client time is different from server time.
+        if let resp = response as? HTTPURLResponse {
+            if let serverDateString = resp.allHeaderFields["Date"] as? String {
+                serverDate = serverDateString.asInternetDate
+            }
+        }
+        */
+ 
         let jxTop = try! Query.decoder.decode(JXObject.Top.self, from: data)
         
         guard jxTop.errors == nil else {

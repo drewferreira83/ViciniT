@@ -60,6 +60,7 @@ open class Query: Hashable, CustomStringConvertible {
     public var created: Date = Date()
     public var issued: Date?
     public var received: Date?
+    public var serverDate: Date?
     
     init( kind: Kind, data: Any? = nil) {
         self.kind = kind
@@ -112,7 +113,7 @@ open class Query: Hashable, CustomStringConvertible {
             Query.activeQueries.track(query: self)
             
             // Create and issue request.
-            URLSession.shared.dataTask(with: url, completionHandler: responseHandler).resume()
+            URLSession.shared.dataTask(with: url, completionHandler: MBTAresponseHandler).resume()
             
             return( true )
         }

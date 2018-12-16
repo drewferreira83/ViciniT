@@ -108,9 +108,11 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
             refreshStops()
         }
 
-        updateLocationButton()
+        updateButtonBox()
     }
     
+    // NB:  If the user changes location privs directly in Settings, this method is called when the app is made active again.
+    // It is called before AppDelegate.applicatonDidBecomeActive.
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         // Show the user only if we are authorized.
         let showUser = (status == .authorizedWhenInUse || status == .authorizedAlways) && UserSettings.shared.trackUser
@@ -121,7 +123,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
             if let newCenter = self.locMgr.location?.coordinate {
                 self.forceShowStops = true
                 self.mapView.setCenter( newCenter, animated: true )
-                self.updateLocationButton()
+                self.updateButtonBox()
             }
         }
     }

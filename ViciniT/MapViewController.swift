@@ -259,35 +259,39 @@ class MapViewController: UIViewController, MapManager {
     //  The showFavoritesButton is shown if there are favorites.
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         selectedMarkView?.prepareForDisplay()
-        favoriteButton.isHidden = UserSettings.shared.favoriteStops.isEmpty
-    }
-    
-    func didBecomeActive() {
-        predictionsViewController.reloadPressed( self ) // NOOP if predictions isn't up
-        updateLocationButton()
-    }
-    
-    func updateLocationButton() {
-        // Hide the location button if any is true:
-        //   MapView isn't showing user location (this covers the permission disallowed situation)
-        //   The user location is currently visible
-        //   The option to track the user is off
-        locationButton.isHidden =  !mapView.showsUserLocation || mapView.isUserLocationVisible || !UserSettings.shared.trackUser
-    }
-    
-    @IBAction func returnToMap( _ sender: UIStoryboardSegue? ) {
-        // User might have changed tracking flag.
-        mapView.showsUserLocation = UserSettings.shared.trackUser
-        updateLocationButton()
         
         // Should the stops be refreshed?
         if refreshStopsOnReturn {
             refreshStopsOnReturn = false
             refreshStops()
         }
+        
+        updateButtonBox()
     }
- 
+    
+    // Called from AppDelegate when App comes back to foreground
+    func didBecomeActive() {
+        predictionsViewController.reloadPressed( self ) // NOOP if predictions isn't up
+        updateButtonBox()
+    }
+    
+    func updateButtonBox() {
+        favoriteButton.isHidden = UserSettings.shared.favoriteStops.isEmpty
+
+        // Validate user tracking. The user may have changed settings within the map or directly through Device Settings.
+        mapView.showsUserLocation = UserSettings.shared.trackUser && CLLocationManager.locationServicesEnabled()
+
+        // Hide the location button if any is true:
+        //   MapView isn't showing user location (validation above checks both app flag and device privs)
+        //   The user location is currently visible
+
+        locationButton.isHidden =  !mapView.showsUserLocation || mapView.isUserLocationVisible
+        
+        buttonBox.isHidden = (locationButton.isHidden && favoriteButton.isHidden)
+    }
+  
     func refreshStops() {
         let kind: Query.Kind = scopeLevel == .farthest ? .majorStopsInRegion : .allStopsInRegion
         let query = Query(kind: kind, data: mapView.region)

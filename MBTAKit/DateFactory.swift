@@ -20,7 +20,11 @@ public class DateFactory {
     // MBTA sends timestamps in this format: "2018-08-26T12:09:51-04:00",
     static let ISOdateFormatter = ISO8601DateFormatter()
     static let dateFormatter = DateFormatter()
-
+    static let internetDateFormatter: DateFormatter = {
+        var idf = DateFormatter()
+        idf.dateFormat = "EEEE, dd LLL yyyy HH:mm:ss zzz"
+        return idf
+    }()
 }
 
 public extension NSAttributedString {
@@ -36,6 +40,10 @@ public extension NSAttributedString {
 extension String {
     var asDate: Date? {
         return DateFactory.ISOdateFormatter.date( from: self )
+    }
+    
+    var asInternetDate: Date? {
+        return DateFactory.internetDateFormatter.date( from: self )
     }
 }
 
