@@ -32,7 +32,14 @@ public struct Default {
     public struct Location {
         public static let BOSTON = CLLocationCoordinate2D( latitude: 42.36, longitude: -71.062)
         public static let DAVIS = CLLocationCoordinate2D( latitude: 42.40, longitude: -71.122299)
+        public static let manager = CLLocationManager()
+        public static var accessible: Bool {
+            return CLLocationManager.locationServicesEnabled() &&
+                (CLLocationManager.authorizationStatus() == .authorizedAlways ||
+                 CLLocationManager.authorizationStatus() == .authorizedWhenInUse)
+        }
     }
+    
 }
 
 public struct Images {
@@ -206,7 +213,7 @@ public struct Scope {
 }
 
 
-
+// Support to allow view borders to be set in Xcode IB.
 @IBDesignable extension UIView {
     @IBInspectable var borderColor: UIColor? {
         set {

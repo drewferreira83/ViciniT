@@ -120,7 +120,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
         DispatchQueue.main.async {
             self.mapView.showsUserLocation = showUser
 
-            if let newCenter = self.locMgr.location?.coordinate {
+            if let newCenter = Default.Location.manager.location?.coordinate {
                 self.forceShowStops = true
                 self.mapView.setCenter( newCenter, animated: true )
                 self.updateButtonBox()

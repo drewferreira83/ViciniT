@@ -41,7 +41,7 @@ class MapViewController: UIViewController, MapManager {
     // Recenter the map on the user's location.
     @IBAction func showLocation(_ sender: Any) {
         // We do want a search after the recenter.
-        if let newCenter = locMgr.location?.coordinate {
+        if let newCenter = Default.Location.manager.location?.coordinate {
             forceShowStops = true
             mapView.setCenter(newCenter, animated: true)
         }
@@ -53,7 +53,6 @@ class MapViewController: UIViewController, MapManager {
     var selectedMarkView: MarkView?
     var predictionsViewController: PredictionViewController!
     var predictionsNavVC: UINavigationController!
-    let locMgr = CLLocationManager()
     
     var userInitiatedRegionChange = false
     var forceShowStops = false
@@ -96,9 +95,9 @@ class MapViewController: UIViewController, MapManager {
         predictionsNavVC = mainStoryboard.instantiateViewController(withIdentifier: "PredictionsNavVC") as? UINavigationController
         predictionsViewController = predictionsNavVC.viewControllers[0] as? PredictionViewController
     
-        locMgr.delegate = self
-        locMgr.desiredAccuracy = kCLLocationAccuracyBest
-        locMgr.distanceFilter = 50.0
+        Default.Location.manager.delegate = self
+        Default.Location.manager.desiredAccuracy = kCLLocationAccuracyBest
+        Default.Location.manager.distanceFilter = 50.0
         
         // If app authorization has not been determined, ask for permission from OS
         // Once set, it will remain set until app is deleted.
@@ -107,17 +106,19 @@ class MapViewController: UIViewController, MapManager {
         
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined:
-            locMgr.requestWhenInUseAuthorization()
+            Default.Location.manager.requestWhenInUseAuthorization()
+            forceShowStops = true
 
         case .authorizedAlways, .authorizedWhenInUse:
             mapView.showsUserLocation = true
-            if let here = locMgr.location?.coordinate {
+            if let here = Default.Location.manager.location?.coordinate {
                 // We have the user's location, so overrride teh default start region.
                 startRegion = MKCoordinateRegion(center: here, span: Default.Map.span)
             }
             
         default:
             mapView.showsUserLocation = false
+            forceShowStops = true
         }
         
         mapView.setRegion( startRegion, animated: false )
@@ -131,7 +132,7 @@ class MapViewController: UIViewController, MapManager {
     /****  PUBLIC FUNCTIONS  ****/
     
     func getUserLocation() -> CLLocationCoordinate2D? {
-        return locMgr.location?.coordinate
+        return Default.Location.manager.location?.coordinate
     }
 
     
@@ -199,7 +200,6 @@ class MapViewController: UIViewController, MapManager {
                     Debug.log( "Could not find actual annotation in mapView for \(markToSelect).", flag: .error )
                 }
             }
-
         }
     }
 
@@ -281,7 +281,7 @@ class MapViewController: UIViewController, MapManager {
         favoriteButton.isHidden = UserSettings.shared.favoriteStops.isEmpty
 
         // Validate user tracking. The user may have changed settings within the map or directly through Device Settings.
-        mapView.showsUserLocation = UserSettings.shared.trackUser && CLLocationManager.locationServicesEnabled()
+        mapView.showsUserLocation = UserSettings.shared.trackUser && Default.Location.accessible
 
         // Hide the location button if any is true:
         //   MapView isn't showing user location (validation above checks both app flag and device privs)

@@ -15,10 +15,7 @@ class SettingsViewController: UIViewController {
     @IBOutlet weak var subwayButton: UIButton!   // GTFS RouteType of 0 and 1
     @IBOutlet weak var commRailButton: UIButton!
     @IBOutlet weak var busButton: UIButton!
-    
-    
     @IBOutlet weak var infoWebView: WKWebView!
-    
     
     var routeTypes = UserSettings.shared.routeTypes
     
@@ -41,11 +38,13 @@ class SettingsViewController: UIViewController {
         MapViewController.shared.refreshStopsOnReturn = true
     }
     
-    override func viewDidLoad() {
-        trackUserSwitch.isOn = UserSettings.shared.trackUser
-        trackUserSwitch.isEnabled = CLLocationManager.locationServicesEnabled()
+    override func viewWillAppear(_ animated: Bool) {
+        trackUserSwitch.isEnabled = Default.Location.accessible
         updateImages()
-        
+        super.viewWillAppear(animated)
+    }
+    
+    override func viewDidLoad() {
         if let localFile = Bundle.main.url(forResource: "ViciniTHelp", withExtension: "rtf", subdirectory: nil, localization: nil) {
             let myRequest = NSURLRequest(url: localFile) as URLRequest
             infoWebView.load(myRequest)
