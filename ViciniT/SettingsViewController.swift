@@ -9,8 +9,9 @@
 import UIKit
 import MapKit
 import WebKit
+import MessageUI
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: UIViewController, MFMailComposeViewControllerDelegate {
     @IBOutlet weak var trackUserSwitch: UISwitch!
     @IBOutlet weak var subwayButton: UIButton!   // GTFS RouteType of 0 and 1
     @IBOutlet weak var commRailButton: UIButton!
@@ -18,6 +19,28 @@ class SettingsViewController: UIViewController {
     @IBOutlet weak var infoWebView: WKWebView!
     
     var routeTypes = UserSettings.shared.routeTypes
+    
+    @IBAction func feedbackButtonPressed(_ sender: Any) {
+        // Open mail window.
+        if MFMailComposeViewController.canSendMail() {
+            let appVersion = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as? String ?? "No ShortVersionString?"
+            let appBuild = Bundle.main.infoDictionary!["CFBundleVersion"] as? String ?? "No Version?"
+            
+            let mail = MFMailComposeViewController()
+            mail.mailComposeDelegate = self
+            mail.setToRecipients(["support@drew.boston"])
+            mail.setSubject("About ViciniT \(appVersion)")
+            mail.setMessageBody("Build: \(appBuild)<p>", isHTML: true)
+            present(mail, animated: true)
+        } else {
+            // show failure alert
+            
+        }
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
+    }
     
     @IBAction func trackUserChanged(_ sender: UISwitch) {
         UserSettings.shared.trackUser = sender.isOn
@@ -63,5 +86,6 @@ class SettingsViewController: UIViewController {
         commRailButton.setImage( commRailImage, for: .normal)
         busButton.setImage(busImage, for: .normal)
     }
+
 
 }
