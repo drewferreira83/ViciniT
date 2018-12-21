@@ -156,6 +156,9 @@ class MapViewController: UIViewController, MapManager {
     // that are not in the passed array.
     func display( marks: [Mark], kind: Mark.Kind, select: Mark? = nil ) {
 
+        scopeLevel = Scope.level(count: marks.count)
+        
+        
         // Which marks do we need to add to the existing annotations?
         var newMarks = [Mark]()
         for mark in marks {
@@ -187,9 +190,22 @@ class MapViewController: UIViewController, MapManager {
         }
         
         DispatchQueue.main.async {
+            // Remove the annotations that are off-map.
             self.mapView.removeAnnotations(removeMarks)
+            
+            // Update the annotations that are still on the map.
+            for annotation in self.mapView.annotations {
+                if let mark = annotation as? Mark {
+                    let annoView = self.mapView.view(for: mark)
+                    annoView?.setNeedsDisplay()
+                }
+            }
+            
+            // Add the new annotations
             self.mapView.addAnnotations(newMarks)
 
+            print( "Anno count = \(self.mapView.annotations.count)")
+            
             if let markToSelect = select {
                 self.mapView.showAnnotations(newMarks, animated: true)
                 //self.mapView.setCenter( markToSelect.coordinate, animated: true )
@@ -293,8 +309,10 @@ class MapViewController: UIViewController, MapManager {
     }
   
     func refreshStops() {
-        let kind: Query.Kind = scopeLevel == .farthest ? .majorStopsInRegion : .allStopsInRegion
+        let level = Scope.level(region: mapView.region)
+        let kind: Query.Kind = level == .farthest ? .majorStopsInRegion : .allStopsInRegion
         let query = Query(kind: kind, data: mapView.region)
+    
         query.resume()
     }
     

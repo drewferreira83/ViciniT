@@ -99,9 +99,6 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
 
     // The map's region has changed.  If the user initiates the change, then animated is false.
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        // Calculate the scope level.
-        scopeLevel = Scope.level(region: mapView.region)
-
         // Update the stops, if appropriate.
         if userInitiatedRegionChange || forceShowStops {
             forceShowStops = false

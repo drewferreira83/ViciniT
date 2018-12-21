@@ -46,18 +46,14 @@ extension ViciniT {
                 fatalError( "/stops didn't have a MKCoordinateRegion. \(query)" )
             }
 
-            let scopeLevel = Scope.level(region: region)
-            
             var marks = [Mark]()
             for stop in stops {
                 // Ignore child stations.
-                if stop.parentID == nil {
-                    marks.append(Mark(stop: stop, scopeLevel: scopeLevel))
+                if stop.parentID == nil && region.contains(stop.coordinate) {
+                    marks.append(Mark(stop: stop ))
                 }
             }
-            
-            print( "Marks: \(marks.count), scope: \(scopeLevel)")
-            
+                        
             // Does not change region, does not select anything. Doesn't affect any vehicles.
             map.display(marks: marks, kind: .stop, select: nil )
             

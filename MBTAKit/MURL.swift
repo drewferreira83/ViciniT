@@ -95,7 +95,7 @@ extension Query {
             }
 
             let center = region.center
-            let radius = region.span.maxDelta * 0.55 // 
+            let radius = region.span.maxDelta * 0.55 // dividing by 2 didn't get edge cases.
 
             baseString.append( "&filter[latitude]=\(center.latitude)" )
             baseString.append( "&filter[longitude]=\(center.longitude)" )

@@ -46,7 +46,6 @@ class MarkView: MKAnnotationView {
     }
     
     override func prepareForDisplay() {
-        super.prepareForDisplay()
         
         // Probably won't happen, and it's not a bad thing if it does.  Just ignore it.
         guard let mark = mark else {
@@ -90,6 +89,8 @@ class MarkView: MKAnnotationView {
         }
         
         self.image = newImage
+        
+        super.prepareForDisplay()
     }
     
     open func dismiss() {
@@ -102,5 +103,10 @@ class MarkView: MKAnnotationView {
         detailCalloutAccessoryView = nil
     }
  
+    deinit {
+        detailCalloutAccessoryView = nil
+        image = nil
+    }
+    
 }
 

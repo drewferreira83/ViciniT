@@ -19,7 +19,7 @@ open class Mark: NSObject, MKAnnotation {
     public let location: CLLocation
     public let title: String?
     public var subtitle: String?
-    public var scopeLevel: Scope.Level
+    public var scopeLevel = Scope.Level.normal
     
     public let stop: Stop?
     public let vehicle: Vehicle?
@@ -43,7 +43,7 @@ open class Mark: NSObject, MKAnnotation {
     var kind: Kind
     var rotation: Int = 0
 
-    init( stop: Stop, scopeLevel: Scope.Level = Scope.Level.normal) {
+    init( stop: Stop ) {
         //  HACK:  To ensure minimum width of callout bubble, pad short stop names with spaces.
         self.coordinate = stop.coordinate
         self.location = CLLocation(latitude: stop.coordinate.latitude, longitude: stop.coordinate.longitude )
@@ -52,12 +52,12 @@ open class Mark: NSObject, MKAnnotation {
         self.subtitle = nil 
         self.stop = stop
         self.vehicle = nil
-        self.scopeLevel = scopeLevel
+//        self.scopeLevel = scopeLevel
 
         super.init()
     }
 
-    init( vehicle: Vehicle, scopeLevel: Scope.Level = .normal ) {
+    init( vehicle: Vehicle) {
         self.coordinate = vehicle.coordinate
         self.location = CLLocation(latitude: vehicle.coordinate.latitude, longitude: vehicle.coordinate.longitude )
         self.kind = .vehicle
@@ -66,17 +66,12 @@ open class Mark: NSObject, MKAnnotation {
         self.vehicle = vehicle
         self.rotation = vehicle.bearing ?? 0
         self.stop = nil
-        self.scopeLevel = scopeLevel
+//        self.scopeLevel = scopeLevel
 
         super.init()
     }
-/*
-    deinit {
-        image = nil
-        stop = nil
-        vehicle = nil
-    }
- */
+
+ 
     override open var description: String {
         return( "(Mark:\(kind) \"\(title ?? "No title")\" super[\(super.description)])")
     }

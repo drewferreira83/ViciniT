@@ -191,6 +191,21 @@ public struct Scope {
         case farthest   //     2   Subway and CR only
     }
     
+    public static func level( count: Int ) -> Level {
+        switch count {
+        case 0...6:
+            return .closest
+        case 7...18:
+            return .closer
+        case 19...45:
+            return .normal
+        case 46...60:
+            return .farther
+        default:
+            return .farthest
+        }
+    }
+    
     public static func level(span: MKCoordinateSpan) -> Level {
         let delta = span.maxDelta
         
@@ -200,7 +215,7 @@ public struct Scope {
             return .closer
         } else if delta < 0.020 {
             return .normal
-        } else if delta < 0.04 {
+        } else if delta < 0.040 {
             return .farther
         }
 
@@ -244,3 +259,13 @@ public struct Scope {
         }
     }
 }
+
+extension MKCoordinateRegion {
+    public func contains( _ coord: CLLocationCoordinate2D ) -> Bool {
+        let latInRange = abs(center.latitude - coord.latitude) <= span.latitudeDelta / 2
+        let lngInRange = abs(center.longitude - coord.longitude) <= span.longitudeDelta / 2
+        
+        return latInRange && lngInRange
+    }
+}
+
