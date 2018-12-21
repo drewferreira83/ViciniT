@@ -95,7 +95,7 @@ extension Query {
             }
 
             let center = region.center
-            let radius = region.span.maxDelta
+            let radius = region.span.maxDelta * 0.55 // 
 
             baseString.append( "&filter[latitude]=\(center.latitude)" )
             baseString.append( "&filter[longitude]=\(center.longitude)" )

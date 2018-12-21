@@ -99,4 +99,13 @@ class UserSettings: NSObject {
         favoriteStops = favStops
     }
     
+    /*
+     Problem: How to always display favorite stops?
+     
+     1) Maintain array of favorite stops.
+     1a) At startup, initialize list with query of UserSettings.favoriteStops ids.
+     1b) When User adds or removes favorite stop, update array
+     2) MapViewController has a list of persistent stops which are not removed when stops are refeshed? 
+ */
+    
 }

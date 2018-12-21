@@ -16,6 +16,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     @IBOutlet weak var subwayButton: UIButton!   // GTFS RouteType of 0 and 1
     @IBOutlet weak var commRailButton: UIButton!
     @IBOutlet weak var busButton: UIButton!
+    @IBOutlet weak var feedbackButton: UIButton!
     @IBOutlet weak var infoWebView: WKWebView!
     
     var routeTypes = UserSettings.shared.routeTypes
@@ -23,6 +24,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     @IBAction func feedbackButtonPressed(_ sender: Any) {
         // Open mail window.
         if MFMailComposeViewController.canSendMail() {
+            //let appName = Bundle.main.infoDictionary!["CFBundleName" <<NOT SURE
             let appVersion = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as? String ?? "No ShortVersionString?"
             let appBuild = Bundle.main.infoDictionary!["CFBundleVersion"] as? String ?? "No Version?"
             
@@ -62,6 +64,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        feedbackButton.isEnabled = MFMailComposeViewController.canSendMail()
         trackUserSwitch.isEnabled = Default.Location.accessible
         updateImages()
         super.viewWillAppear(animated)

@@ -77,10 +77,10 @@ class MarkView: MKAnnotationView {
                 newImage = stopType == .station ? Images.stop18 : Images.stop12
                 
             case .farther:
-                newImage = stopType == .station ? Images.stop18 : Images.stop08
+                newImage = stopType == .station ? Images.stop12 : Images.stop08
             
             case .farthest:
-                newImage = Images.stop12  // No Busses.
+                newImage = Images.stop12
             }
             
         case .vehicle:
