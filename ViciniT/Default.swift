@@ -178,54 +178,6 @@ extension UIColor {
 
 }
 
-public struct Scope {
-    //  The raw values are the thresholds (measured in degrees of latitude in the Boston area,
-    //   about 0.02 degrees == 1 mile) used to categorize the span.
-    //  NB: Image assignment is in MarkView code.
-    public enum Level: Int, CaseIterable {
-                        //  Station   Stop
-        case closest    //     0       1
-        case closer     //     0       2
-        case normal     //     1       2
-        case farther    //     1       3
-        case farthest   //     2   Subway and CR only
-    }
-    
-    public static func level( count: Int ) -> Level {
-        switch count {
-        case 0...6:
-            return .closest
-        case 7...18:
-            return .closer
-        case 19...45:
-            return .normal
-        case 46...60:
-            return .farther
-        default:
-            return .farthest
-        }
-    }
-    
-    public static func level(span: MKCoordinateSpan) -> Level {
-        let delta = span.maxDelta
-        
-        if delta < 0.012 {
-            return .closest
-        } else if delta < 0.016 {
-            return .closer
-        } else if delta < 0.020 {
-            return .normal
-        } else if delta < 0.040 {
-            return .farther
-        }
-
-        return .farthest
-    }
-    
-    public static func level(region: MKCoordinateRegion) -> Level {
-        return( level( span: region.span ) )
-    }
-}
 
 
 // Support to allow view borders to be set in Xcode IB.

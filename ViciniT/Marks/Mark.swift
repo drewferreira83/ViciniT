@@ -19,7 +19,7 @@ open class Mark: NSObject, MKAnnotation {
     public let location: CLLocation
     public let title: String?
     public var subtitle: String?
-    public var scopeLevel = Scope.Level.normal
+//    public var scopeLevel = Scope.Level.normal
     
     public let stop: Stop?
     public let vehicle: Vehicle?
@@ -90,7 +90,7 @@ open class Mark: NSObject, MKAnnotation {
 // Two marks are the same if they are at the same scope, of the same kind, and they have the same coordinates.
 func ==(lhs: Mark, rhs: Mark) -> Bool {
     return ((lhs.kind == rhs.kind) &&
-            (lhs.scopeLevel == rhs.scopeLevel) &&
+           // (lhs.scopeLevel == rhs.scopeLevel) &&
             (lhs.coordinate.latitude == rhs.coordinate.latitude) &&
             (lhs.coordinate.longitude == rhs.coordinate.longitude))
 }

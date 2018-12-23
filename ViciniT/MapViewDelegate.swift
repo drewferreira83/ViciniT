@@ -17,9 +17,6 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
      
         // Are we working with a custom annotation?
         if let mark = annotation as? Mark {
-            // Update the mark's scopeLevel
-            mark.scopeLevel = scopeLevel
-            
             if let markView = mapView.dequeueReusableAnnotationView(withIdentifier: MarkView.Identifier) as? MarkView {
                 // We are reusing this annotation.  Need to overwrite the old values.
                 markView.annotation = mark

@@ -33,6 +33,8 @@ class MapViewController: UIViewController, MapManager {
     @IBOutlet weak var favoriteButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var buttonBox: UIView!
+    @IBOutlet weak var bannerBox: UIView!
+    @IBOutlet weak var bannerLabel: UILabel!
     
     @IBAction func showFavorites(_ sender: Any) {
         vicinit.showFavorites()
@@ -47,7 +49,6 @@ class MapViewController: UIViewController, MapManager {
         }
     }
     
-    var scopeLevel: Scope.Level = .normal
     var vicinit: ViciniT!
     
     var selectedMarkView: MarkView?
@@ -57,6 +58,7 @@ class MapViewController: UIViewController, MapManager {
     var userInitiatedRegionChange = false
     var forceShowStops = false
     var refreshStopsOnReturn = false
+    var markViewSize = MarkView.Size.medium
     
     override func viewDidLoad() {
         MapViewController.shared = self
@@ -90,6 +92,8 @@ class MapViewController: UIViewController, MapManager {
         buttonBox.layer.borderWidth = 1
         buttonBox.layer.cornerRadius = 8
         buttonBox.clipsToBounds = true
+        
+        bannerBox.isHidden = true
         
         let mainStoryboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         predictionsNavVC = mainStoryboard.instantiateViewController(withIdentifier: "PredictionsNavVC") as? UINavigationController
@@ -156,7 +160,14 @@ class MapViewController: UIViewController, MapManager {
     // that are not in the passed array.
     func display( marks: [Mark], kind: Mark.Kind, select: Mark? = nil ) {
 
-        scopeLevel = Scope.level(count: marks.count)
+        switch marks.count {
+        case 0...8:
+            markViewSize = .large
+        case 9...40:
+            markViewSize = .medium
+        default:
+            markViewSize = .small
+        }
         
         
         // Which marks do we need to add to the existing annotations?
@@ -195,9 +206,8 @@ class MapViewController: UIViewController, MapManager {
             
             // Update the annotations that are still on the map.
             for annotation in self.mapView.annotations {
-                if let mark = annotation as? Mark {
-                    let annoView = self.mapView.view(for: mark)
-                    annoView?.setNeedsDisplay()
+                if let markView = self.mapView.view(for: annotation) as? MarkView {
+                    markView.size = self.markViewSize
                 }
             }
             
@@ -309,8 +319,16 @@ class MapViewController: UIViewController, MapManager {
     }
   
     func refreshStops() {
-        let level = Scope.level(region: mapView.region)
-        let kind: Query.Kind = level == .farthest ? .majorStopsInRegion : .allStopsInRegion
+        let excludeBuses = mapView.region.span.maxDelta > 0.04
+        
+        if excludeBuses && UserSettings.shared.routeTypes[GTFS.RouteType.bus.rawValue] {
+            bannerLabel.text = "Zoom in to see bus stops"
+            bannerBox.isHidden = false
+        } else {
+            bannerBox.isHidden = true
+        }
+        
+        let kind: Query.Kind = excludeBuses ? .majorStopsInRegion : .allStopsInRegion
         let query = Query(kind: kind, data: mapView.region)
     
         query.resume()
@@ -329,6 +347,7 @@ class MapViewController: UIViewController, MapManager {
     }
     */
     
+
 }
 
 

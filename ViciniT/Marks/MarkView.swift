@@ -12,12 +12,31 @@ import MapKit
 // These objects may be reused by the mapViewController.  When the underlying customAnnotation is updated, the image of the 
 // view will be updated to correct type and rotation (if applicable)
 class MarkView: MKAnnotationView {
+    
+    enum Size {
+        case small, medium, large
+    }
+    
     enum ClusterType: String {
         case station, stop
     }
     
     static let Identifier = "MarkView"
     let routeLabel = UILabel()
+    
+    var _size = Size.medium
+    var size: Size {
+        set (value) {
+            if value != _size {
+                setNeedsDisplay()
+            }
+            _size = value
+        }
+        
+        get {
+            return _size
+        }
+    }
     
     var mark: Mark? {
         return annotation as? Mark
@@ -34,7 +53,6 @@ class MarkView: MKAnnotationView {
         routeLabel.numberOfLines = 0
         routeLabel.lineBreakMode = .byWordWrapping
         rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
-        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -58,33 +76,23 @@ class MarkView: MKAnnotationView {
         switch (mark.kind) {
         case .stop where mark.isFavorite:
             // Favorite Stops...
-            newImage = mark.scopeLevel == .farthest ? Images.favoriteStop20 : Images.favoriteStop24
+            newImage = Images.favoriteStop20
 
         case .stop:
             // All other stops...
-            // GTFS.locationType .stations means that it is a physical structure or it has children stops.
-            let stopType = mark.stop!.locationType
-
-            switch mark.scopeLevel {
-            case .closest:
-                newImage = stopType == .station ? Images.stop24 : Images.stop18
-                
-            case .closer:
-                newImage = stopType == .station ? Images.stop24 : Images.stop12
-                
-            case .normal:
-                newImage = stopType == .station ? Images.stop18 : Images.stop12
-                
-            case .farther:
-                newImage = stopType == .station ? Images.stop12 : Images.stop08
-            
-            case .farthest:
+            switch _size {
+            case .large:
+                newImage = Images.stop18
+            case .medium:
                 newImage = Images.stop12
+            case .small:
+                newImage = Images.stop08
             }
+
             
         case .vehicle:
             // Vehicles
-            newImage = mark.scopeLevel == .normal ? Images.vehicle24 : Images.vehicle12
+            newImage = Images.vehicle12
             newImage = newImage.rotate( byDegrees: mark.rotation)
         }
         
