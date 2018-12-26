@@ -20,6 +20,7 @@ import Foundation
  */
 public protocol QueryListener {
     func receive(query: Query) -> Void
+    func dataPendingUpdate( busy: Bool ) -> Void
 }
 
 
@@ -27,7 +28,7 @@ open class Query: Hashable, CustomStringConvertible {
     
     static internal var counter = 0
     static internal let decoder = JSONDecoder()
-    static internal var activeQueries = Tracker()
+    static public var activeQueries = Tracker()
 
     static public var listener: QueryListener!
 
@@ -111,10 +112,10 @@ open class Query: Hashable, CustomStringConvertible {
             // Update and track Query.
             issued = Date()
             Query.activeQueries.track(query: self)
-            
+            Query.listener.dataPendingUpdate(busy: true)
+
             // Create and issue request.
             URLSession.shared.dataTask(with: url, completionHandler: MBTAresponseHandler).resume()
-            
             return( true )
         }
         

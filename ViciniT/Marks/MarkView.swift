@@ -79,8 +79,9 @@ class MarkView: MKAnnotationView {
             newImage = Images.favoriteStop20
 
         case .stop:
+/*
             // All other stops...
-            switch _size {
+            switch size {
             case .large:
                 newImage = Images.stop18
             case .medium:
@@ -88,6 +89,8 @@ class MarkView: MKAnnotationView {
             case .small:
                 newImage = Images.stop08
             }
+*/
+            newImage = Images.stop18
 
             
         case .vehicle:

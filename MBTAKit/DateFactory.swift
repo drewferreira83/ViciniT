@@ -25,6 +25,7 @@ public class DateFactory {
         idf.dateFormat = "EEEE, dd LLL yyyy HH:mm:ss zzz"
         return idf
     }()
+
 }
 
 public extension NSAttributedString {
@@ -64,6 +65,15 @@ extension Date {
         default:
             fatalError( "Format not implemented. \(DateFactory.format)" )
         }
+    }
+    
+    func localWithSeconds() -> String {
+        let formatString = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: Locale.current)!
+        let hasAMPM = formatString.contains("a")
+        
+        let tf = DateFormatter()
+        tf.dateFormat = hasAMPM ? "hh:mm:ss a" : "HH:mm:ss"
+        return tf.string( from: self )
     }
 
     func minutesFromNow() -> (string: String, attributes: AttrDict) {

@@ -112,9 +112,10 @@ extension Query {
         
         Query.activeQueries.remove( query: self )
         Query.listener.receive(query: self)
+        Query.listener.dataPendingUpdate(busy: !Query.activeQueries.isEmpty)
     }
 
-    class Tracker {
+    open class Tracker {
         private var queries = Set<Query>()
         
         var count: Int {

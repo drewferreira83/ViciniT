@@ -20,6 +20,7 @@ protocol MapManager {
     func display( marks: [Mark], kind: Mark.Kind, select: Mark?)
     func show( predictions: [Prediction], for stop: Stop )
     func show( routes: [Route], for stop: Stop )
+    func setDataPending( _ state: Bool )
 //    func select( mark: Mark )
     
     func getUserLocation() -> CLLocationCoordinate2D?
@@ -35,6 +36,11 @@ class MapViewController: UIViewController, MapManager {
     @IBOutlet weak var buttonBox: UIView!
     @IBOutlet weak var bannerBox: UIView!
     @IBOutlet weak var bannerLabel: UILabel!
+    @IBOutlet weak var busyIndicator: UIActivityIndicatorView!
+    
+    @IBAction func dismissBannerBox(_ sender: Any) {
+        bannerBox.fadeOut()
+    }
     
     @IBAction func showFavorites(_ sender: Any) {
         vicinit.showFavorites()
@@ -65,22 +71,9 @@ class MapViewController: UIViewController, MapManager {
         
         super.viewDidLoad()
         
-        // Not 100%sure what register does, it is new with iOS 11...
+        // Not 100% sure what register does, it is new with iOS 11...
         mapView.register(MarkView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         
-        /*
-         Wanted to detect rotation of device to set the visibility of the Show Current Location button.  However, in the closure, the mapView isn't
-         reporting on the user's visibility as expected.
-
-        // Detect rotation of device, which might move the user location off screen.
-        NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification,
-                                               object: nil,
-                                               queue: .main,
-                                               using: { notification in
-                                                print( "User visible? \(self.mapView.isUserLocationVisible)")
-                                                self.locationButton.isHidden = !self.mapView.showsUserLocation || self.mapView.isUserLocationVisible
-        })
-         */
 
         // Start functionality.
         Query.routeTypes = UserSettings.shared.routeTypes
@@ -88,12 +81,8 @@ class MapViewController: UIViewController, MapManager {
         mapView.delegate = self
         locationButton.isHidden = true
         
-        buttonBox.layer.borderColor = UIColor.black.cgColor
-        buttonBox.layer.borderWidth = 1
-        buttonBox.layer.cornerRadius = 8
-        buttonBox.clipsToBounds = true
-        
-        bannerBox.isHidden = true
+        bannerBox.alpha = 0.0
+        bannerLabel.preferredMaxLayoutWidth = UIScreen.main.bounds.width - 60 // Padding and cancel button
         
         let mainStoryboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         predictionsNavVC = mainStoryboard.instantiateViewController(withIdentifier: "PredictionsNavVC") as? UINavigationController
@@ -139,7 +128,6 @@ class MapViewController: UIViewController, MapManager {
         return Default.Location.manager.location?.coordinate
     }
 
-    
     // Returns the actual MKAnnotation used in the MapView that matches the passed Mark object.
     private func annotationForMark( mark: Mark ) -> MKAnnotation? {
         for annotation in mapView.annotations {
@@ -321,11 +309,12 @@ class MapViewController: UIViewController, MapManager {
     func refreshStops() {
         let excludeBuses = mapView.region.span.maxDelta > 0.04
         
-        if excludeBuses && UserSettings.shared.routeTypes[GTFS.RouteType.bus.rawValue] {
+        if excludeBuses && UserSettings.shared.routeTypes[GTFS.RouteType.bus.rawValue] && !Session.zoomInForBuses {
             bannerLabel.text = "Zoom in to see bus stops"
-            bannerBox.isHidden = false
+            bannerBox.fadeIn()
+            Session.zoomInForBuses = true
         } else {
-            bannerBox.isHidden = true
+            bannerBox.fadeOut()
         }
         
         let kind: Query.Kind = excludeBuses ? .majorStopsInRegion : .allStopsInRegion
@@ -334,18 +323,15 @@ class MapViewController: UIViewController, MapManager {
         query.resume()
     }
     
-    /*
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear( animated )
-        
-        let coords = CLLocationCoordinate2D(latitude: 42.351074, longitude: -71.065126)
-        let region = MKCoordinateRegion(center: coords, latitudinalMeters: 500, longitudinalMeters: 500 )
-        let query = Query(kind: .test, data: region)
-        query.resume()
-        
-        
+    func setDataPending( _ state: Bool ) {
+        DispatchQueue.main.async {
+            if state {
+                self.busyIndicator.startAnimating()
+            } else {
+                self.busyIndicator.stopAnimating()
+            }
+        }
     }
-    */
     
 
 }

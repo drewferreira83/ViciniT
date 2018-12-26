@@ -13,6 +13,8 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var predictionTable: UITableView!
     @IBOutlet weak var favoriteButton: UIBarButtonItem!
     
+    @IBOutlet weak var timestampLabel: UILabel!
+    @IBOutlet weak var stopNameLabel: UILabel!
     @IBAction func donePressed(_ sender: Any) {
         dismiss()
     }
@@ -37,7 +39,7 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
         }
 
         // Get predictions
-       let query =  Query(kind: .predictions, data: stop )
+        let query =  Query(kind: .predictions, data: stop )
         query.resume()
     }
     
@@ -50,10 +52,10 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     // Each section has a RoutePredction object.
     var predsByRoute = [RoutePrediction]()
     
+    
     func setPredictions( _ predictions: [Prediction], for stop: Stop) {
         self.stop = stop
-        navigationItem.title = stop.name
-        
+       
         predsByRoute.removeAll()
         
         for prediction in predictions {
@@ -72,6 +74,7 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
         // If it isn't up, then the update happens during viewWillAppear.
         if view.window != nil {
             predictionTable.reloadData()
+            timestampLabel.text = "As of \(Date().localWithSeconds())"
         }
         updateFavoriteButton()
     }
@@ -86,6 +89,13 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        guard let stop = stop else {
+            print( "Predictions will appear before stop is set?" )
+            return
+        }
+        stopNameLabel.text = stop.name
+        timestampLabel.text = "As of \(Date().localWithSeconds())"
+
         predictionTable.reloadData()
         predictionTable.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         super.viewWillAppear(animated)
@@ -169,18 +179,7 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
         query.resume()
         
         dismiss()
-/*
-        // As a test, create a vehicle mark and display it.
-        if let vehicleID = prediction.vehicleID {
-            let query = Query(kind: .vehicles, data: vehicleID )
-            query.resume()
-            dismiss()
-        } else {
-            Debug.log( "Prediction has no vehicle ID. \(prediction)")
-        }
 
-
-*/
     }
 
     public override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

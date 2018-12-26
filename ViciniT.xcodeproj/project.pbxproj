@@ -91,6 +91,7 @@
 		3A47635F2182157F0080AEB1 = {
 			isa = PBXGroup;
 			children = (
+				3A476381218215DD0080AEB1 /* Query.swift */,
 				3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */,
 				3A476380218215DD0080AEB1 /* MBTAKit */,
 				3A47636A2182157F0080AEB1 /* ViciniT */,
@@ -141,7 +142,6 @@
 		3A476380218215DD0080AEB1 /* MBTAKit */ = {
 			isa = PBXGroup;
 			children = (
-				3A476381218215DD0080AEB1 /* Query.swift */,
 				3A476382218215DD0080AEB1 /* DateFactory.swift */,
 				3A476383218215DD0080AEB1 /* Vehicle.swift */,
 				3A476384218215DD0080AEB1 /* Trip.swift */,

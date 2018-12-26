@@ -28,14 +28,24 @@ public class ViciniT: NSObject, QueryListener {
         return( "ViciniT Core Object, v0.1")
     }
     
+    func issue(_ query: Query ) {
+        map.setDataPending( true )
+        query.resume()
+    }
+
     public func receive(query: Query) {
         process(query: query)
     }
     
+    public func dataPendingUpdate(busy: Bool) {
+        map.setDataPending(busy)
+    }
+
     func showFavorites() {
         // GOAL:  Create a region that includes all favorites.
         let query = Query(kind: .theseStops, data: Array(UserSettings.shared.favoriteStops))
-        query.resume()
+        issue( query )
     }
+    
 }
 
