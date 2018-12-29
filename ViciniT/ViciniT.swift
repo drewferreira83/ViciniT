@@ -12,9 +12,7 @@ import MapKit
 public class ViciniT: NSObject, QueryListener {
     static public var share: ViciniT!
     
-    var routeDict = [String: Route]()
-    
-    let map: MapManager!
+       let map: MapManager!
     
     init( mapManager: MapManager ) {
         self.map = mapManager
@@ -22,6 +20,11 @@ public class ViciniT: NSObject, QueryListener {
         
         Query.listener = self
         ViciniT.share = self
+        
+        // Ask for list of subway stops and commuter rail stops.
+        Query(kind: .stopsOfRouteType, data: MBTA.stopType.subway).resume()
+        Query(kind: .stopsOfRouteType, data: MBTA.stopType.commRail).resume()
+        Query(kind: .stopsOfRouteType, data: MBTA.stopType.ferry).resume()
    }
     
     override public var description: String {

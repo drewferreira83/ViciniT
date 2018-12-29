@@ -39,6 +39,7 @@ class MapViewController: UIViewController, MapManager {
     @IBOutlet weak var busyIndicator: UIActivityIndicatorView!
     
     @IBAction func dismissBannerBox(_ sender: Any) {
+        Session.zoomInForBuses = true
         bannerBox.fadeOut()
     }
     
@@ -64,7 +65,7 @@ class MapViewController: UIViewController, MapManager {
     var userInitiatedRegionChange = false
     var forceShowStops = false
     var refreshStopsOnReturn = false
-    var markViewSize = MarkView.Size.medium
+    //var markViewSize = MarkView.Size.medium
     
     override func viewDidLoad() {
         MapViewController.shared = self
@@ -147,7 +148,7 @@ class MapViewController: UIViewController, MapManager {
     // It will only add new Marks and it will remove any marks of the specified kind
     // that are not in the passed array.
     func display( marks: [Mark], kind: Mark.Kind, select: Mark? = nil ) {
-
+/*
         switch marks.count {
         case 0...8:
             markViewSize = .large
@@ -156,7 +157,7 @@ class MapViewController: UIViewController, MapManager {
         default:
             markViewSize = .small
         }
-        
+*/
         
         // Which marks do we need to add to the existing annotations?
         var newMarks = [Mark]()
@@ -192,13 +193,15 @@ class MapViewController: UIViewController, MapManager {
             // Remove the annotations that are off-map.
             self.mapView.removeAnnotations(removeMarks)
             
+            /*
             // Update the annotations that are still on the map.
             for annotation in self.mapView.annotations {
                 if let markView = self.mapView.view(for: annotation) as? MarkView {
                     markView.size = self.markViewSize
                 }
             }
-            
+            */
+ 
             // Add the new annotations
             self.mapView.addAnnotations(newMarks)
 
@@ -242,8 +245,8 @@ class MapViewController: UIViewController, MapManager {
         let listOfRoutes = routes.makeList()
 
         DispatchQueue.main.async {
-            markView.routeLabel.attributedText = listOfRoutes
-            markView.detailCalloutAccessoryView = markView.routeLabel
+            markView.detailLabel.attributedText = listOfRoutes
+            markView.detailCalloutAccessoryView = markView.detailLabel
         }
     }
    
@@ -312,7 +315,6 @@ class MapViewController: UIViewController, MapManager {
         if excludeBuses && UserSettings.shared.routeTypes[GTFS.RouteType.bus.rawValue] && !Session.zoomInForBuses {
             bannerLabel.text = "Zoom in to see bus stops"
             bannerBox.fadeIn()
-            Session.zoomInForBuses = true
         } else {
             bannerBox.fadeOut()
         }

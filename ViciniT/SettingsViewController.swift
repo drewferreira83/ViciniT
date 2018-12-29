@@ -30,7 +30,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
             
             let mail = MFMailComposeViewController()
             mail.mailComposeDelegate = self
-            mail.setToRecipients(["support@drew.boston"])
+            mail.setToRecipients(["drewferreira83@gmail.com"])
             mail.setSubject("About ViciniT \(appVersion)")
             mail.setMessageBody("Build: \(appBuild)<p>", isHTML: true)
             present(mail, animated: true)

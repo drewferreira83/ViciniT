@@ -37,6 +37,7 @@
 		3A4763C3218216070080AEB1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A4763B2218216070080AEB1 /* Main.storyboard */; };
 		3A4763C5218216240080AEB1 /* ViciniTHelp.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */; };
 		3A4763CC21835B1E0080AEB1 /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4763CB21835B1E0080AEB1 /* Debug.swift */; };
+		3AD3010E21D6745B00A7EC5A /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD3010D21D6745B00A7EC5A /* Utilities.swift */; };
 		3AFDF6F8218F41C9009B79FF /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFDF6F7218F41C9009B79FF /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -73,6 +74,7 @@
 		3A4763B3218216070080AEB1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = ViciniTHelp.rtf; sourceTree = "<group>"; };
 		3A4763CB21835B1E0080AEB1 /* Debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Debug.swift; path = Debug/Debug.swift; sourceTree = SOURCE_ROOT; };
+		3AD3010D21D6745B00A7EC5A /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		3AFDF6F7218F41C9009B79FF /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,7 +93,6 @@
 		3A47635F2182157F0080AEB1 = {
 			isa = PBXGroup;
 			children = (
-				3A476381218215DD0080AEB1 /* Query.swift */,
 				3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */,
 				3A476380218215DD0080AEB1 /* MBTAKit */,
 				3A47636A2182157F0080AEB1 /* ViciniT */,
@@ -125,6 +126,7 @@
 				3A4763A2218216060080AEB1 /* ResponseHandler.swift */,
 				3AFDF6F7218F41C9009B79FF /* SettingsViewController.swift */,
 				3A4763A1218216060080AEB1 /* UserSettings.swift */,
+				3AD3010D21D6745B00A7EC5A /* Utilities.swift */,
 				3A4763A0218216060080AEB1 /* ViciniT.swift */,
 				3A4763772182157F0080AEB1 /* Info.plist */,
 			);
@@ -143,16 +145,17 @@
 			isa = PBXGroup;
 			children = (
 				3A476382218215DD0080AEB1 /* DateFactory.swift */,
-				3A476383218215DD0080AEB1 /* Vehicle.swift */,
-				3A476384218215DD0080AEB1 /* Trip.swift */,
-				3A476385218215DD0080AEB1 /* MURL.swift */,
-				3A47638A218215DD0080AEB1 /* JXObject.swift */,
-				3A47638B218215DD0080AEB1 /* Schedule.swift */,
-				3A47638C218215DD0080AEB1 /* Query Utilities.swift */,
 				3A47638D218215DD0080AEB1 /* HasID.swift */,
-				3A47638E218215DD0080AEB1 /* Stop.swift */,
+				3A47638A218215DD0080AEB1 /* JXObject.swift */,
+				3A476385218215DD0080AEB1 /* MURL.swift */,
 				3A47638F218215DD0080AEB1 /* Prediction.swift */,
+				3A476381218215DD0080AEB1 /* Query.swift */,
+				3A47638C218215DD0080AEB1 /* Query Utilities.swift */,
 				3A476390218215DD0080AEB1 /* Route.swift */,
+				3A47638B218215DD0080AEB1 /* Schedule.swift */,
+				3A47638E218215DD0080AEB1 /* Stop.swift */,
+				3A476384218215DD0080AEB1 /* Trip.swift */,
+				3A476383218215DD0080AEB1 /* Vehicle.swift */,
 			);
 			path = MBTAKit;
 			sourceTree = "<group>";
@@ -268,6 +271,7 @@
 				3A4763C1218216070080AEB1 /* PredictionCell.swift in Sources */,
 				3A47639D218215DD0080AEB1 /* Stop.swift in Sources */,
 				3A4763B6218216070080AEB1 /* ResponseHandler.swift in Sources */,
+				3AD3010E21D6745B00A7EC5A /* Utilities.swift in Sources */,
 				3A4763B7218216070080AEB1 /* PredictionViewController.swift in Sources */,
 				3A4763B9218216070080AEB1 /* MarkView.swift in Sources */,
 				3A476391218215DD0080AEB1 /* Query.swift in Sources */,

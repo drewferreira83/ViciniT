@@ -52,21 +52,28 @@ open class Mark: NSObject, MKAnnotation {
         self.subtitle = nil 
         self.stop = stop
         self.vehicle = nil
-//        self.scopeLevel = scopeLevel
 
         super.init()
     }
 
     init( vehicle: Vehicle) {
+        self.kind = .vehicle
+        self.stop = nil
+        self.vehicle = vehicle
         self.coordinate = vehicle.coordinate
         self.location = CLLocation(latitude: vehicle.coordinate.latitude, longitude: vehicle.coordinate.longitude )
-        self.kind = .vehicle
-        self.title = vehicle.id
-        self.subtitle = vehicle.status.rawValue
-        self.vehicle = vehicle
         self.rotation = vehicle.bearing ?? 0
-        self.stop = nil
-//        self.scopeLevel = scopeLevel
+
+        // IF there is additional information about the vehicle...
+        //  Title = Route Short Name + Trip Direction
+        // Subtitle = Status + Stop
+        if let route = vehicle.route, let trip = vehicle.trip, let stop = vehicle.stop {
+            self.title = route.shortName + " " + route.directions[trip.dir] + " to " + trip.headsign
+            self.subtitle = vehicle.status.rawValue + " " + stop.name
+        } else {
+            self.title = "No data"
+            self.subtitle = ""
+        }
 
         super.init()
     }

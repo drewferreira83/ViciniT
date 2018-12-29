@@ -40,6 +40,16 @@ open class Vehicle: HasID {
     public var route: Route?
     public var stop: Stop?
     public var trip: Trip?
+    
+    public var directionName: String {
+        get {
+            guard let route = route, let directionID = directionID else {
+                return ""
+            }
+            
+            return route.directions[directionID]
+        }
+    }
 
     private var _isUnknown = false
     public var isUnknown: Bool {
@@ -64,7 +74,7 @@ open class Vehicle: HasID {
         super.init( id: "vehicle.unknown" )
     }
     
-    init( source: JXObject ) {
+    init( source: JXObject, included: [JXObject]? = nil ) {
         guard let attributes = source.attributes as? Attributes else {
             fatalError( "Vehicle couldn't interpret attributes. \(source)")
         }
@@ -82,6 +92,22 @@ open class Vehicle: HasID {
         self.stopID = source.relatedID(key: .stop)
         self.tripID = source.relatedID(key: .trip)
         
+        // If there is included data, then look for the actual route, stop, and trip objects.
+        if let included = included {
+            if let jxStopData = included.search(forKind: .stop, id: stopID) {
+                self.stop = Stop( source: jxStopData )
+            }
+            
+            if let jxTripData = included.search(forKind: .trip, id: tripID) {
+                self.trip = Trip(source: jxTripData)
+            }
+
+            if let jxRouteData = included.search( forKind: .route, id: routeID) {
+                self.route = Route(source: jxRouteData)
+            }
+            print( "Loaded Vehicle included data." )
+        }
+
         super.init( id: source.id )
     }
 }

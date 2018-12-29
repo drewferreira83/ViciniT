@@ -43,7 +43,7 @@ extension Query {
         
         switch (kind) {
             
-        case .allStopsInRegion, .majorStopsInRegion, .stop, .theseStops, .test :
+        case .allStopsInRegion, .majorStopsInRegion, .stop, .theseStops, .stopsOfRouteType:
             var stops = [Stop]()
             
             // Create the stops in the data block.
@@ -83,7 +83,7 @@ extension Query {
                     Debug.log( "No Attributes for vehicle \(element.id)")
                     continue
                 }
-                vehicles.append( Vehicle( source: element ) )
+                vehicles.append( Vehicle( source: element, included: jxTop.included ) )
             }
             
             self.response = vehicles

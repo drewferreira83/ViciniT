@@ -96,3 +96,17 @@ open class Stop: HasID {
 public func ==(lhs: Stop, rhs: Stop) -> Bool {
     return lhs.id == rhs.id
 }
+
+
+extension Array where Element == Stop {
+    func idSet() -> Set<String> {
+        var result = Set<String>()
+        
+        for stop in self {
+            result.insert(stop.id)
+        }
+        
+        return result
+    }
+}
+

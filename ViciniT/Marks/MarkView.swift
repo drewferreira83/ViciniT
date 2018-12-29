@@ -22,7 +22,7 @@ class MarkView: MKAnnotationView {
     }
     
     static let Identifier = "MarkView"
-    let routeLabel = UILabel()
+    let detailLabel = UILabel()
     
     var _size = Size.medium
     var size: Size {
@@ -49,9 +49,9 @@ class MarkView: MKAnnotationView {
         canShowCallout = true
 
         // Create the route label.  It is not immediately displayed.
-        routeLabel.font = Default.Font.forCalloutSubtitle
-        routeLabel.numberOfLines = 0
-        routeLabel.lineBreakMode = .byWordWrapping
+        detailLabel.font = Default.Font.forCalloutSubtitle
+        detailLabel.numberOfLines = 0
+        detailLabel.lineBreakMode = .byWordWrapping
         rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
     }
     
@@ -79,18 +79,13 @@ class MarkView: MKAnnotationView {
             newImage = Images.favoriteStop20
 
         case .stop:
-/*
-            // All other stops...
-            switch size {
-            case .large:
-                newImage = Images.stop18
-            case .medium:
+            if Session.subwayStopIDs.contains(mark.stop!.id) {
                 newImage = Images.stop12
-            case .small:
+            } else if Session.commRailIDs.contains(mark.stop!.id) {
+                newImage = Images.stopRail12
+            } else {
                 newImage = Images.stop08
             }
-*/
-            newImage = Images.stop18
 
             
         case .vehicle:

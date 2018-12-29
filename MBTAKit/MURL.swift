@@ -20,30 +20,20 @@ extension Query {
     static let URL_HEAD = "https://api-v3.mbta.com"
     static let MBTA_KEY = "?api_key=0de754c34a1445aeac7cbc2c385ef0ae"
     
-    // If routeTypes is nil, no routeType filter is used.  Otherwise, include GTFS.RouteTypes where True is in the
-    // corresponding position in the array.
-    //  e.g. [F,F,T,F,F] means Commuter Rail only. (index 2 = GTFS.RouteType = CommuterRail)
-    static var routeTypes: [Bool]?
+    // Define major route types to be Subway and Commuter Rail.
+    static let majorRouteTypes: [Bool] = [true, true, true, false, false]
+    static let allRouteTypes: [Bool] = [true, true, true, true, true]
 
+    // GTFS route type is used as the index, true to include, false to ignore.
+    //  e.g. [F,F,T,F,F] means Commuter Rail only. (index 2 = GTFS.RouteType = CommuterRail)
+    // Start with including all route types
+    static var routeTypes = Query.allRouteTypes
+    
     static func makeURL(query: Query) -> URL? {
         var baseString: String = URL_HEAD
         
         // Make a route filter if set
-        var typeFilterString = ""
-        
-        if routeTypes != nil {
-            var validTypes = [String]()
-            
-            for i in 0 ..< routeTypes!.count {
-                if routeTypes![i] {
-                    validTypes.append( String(i) )
-                }
-            }
-            
-            if !validTypes.isEmpty {
-                typeFilterString = "&filter[route_type]=\(validTypes.joined( separator: "," ))"
-            }
-        }
+     //   var typeFilterString = ""
         
         switch ( query.kind )
         {
@@ -71,7 +61,7 @@ extension Query {
             baseString.append( "/stops")
             baseString.append( MBTA_KEY )
             baseString.append( "&include=parent_station" )
-            baseString.append( "&filter[id]=\(routeTypesList)")
+            baseString.append( "&filter[route_type]=\(routeTypesList)")
 
 /*
         case .test:
@@ -88,10 +78,19 @@ extension Query {
             baseString.append( MBTA_KEY )
             baseString.append( "&include=parent_station" )
             
-            if query.kind == .majorStopsInRegion {
-                baseString.append( "&filter[route_type]=0,1,2" )
-            } else {
-                baseString.append( typeFilterString )
+            // Determine route_type filter
+
+            let majorFilter = (query.kind == .majorStopsInRegion) ? Query.majorRouteTypes : Query.allRouteTypes
+            var validTypes = [String]()
+                
+            for i in 0 ..< routeTypes.count {
+                if routeTypes[i] && majorFilter[i] {
+                    validTypes.append( String(i) )
+                }
+            }
+
+            if !validTypes.isEmpty {
+                baseString.append( "&filter[route_type]=\(validTypes.joined( separator: "," ))" )
             }
 
             let center = region.center
@@ -150,6 +149,10 @@ extension Query {
                 break
             }
             
+            // Include stop, trip, and route information for more specific queries
+            baseString.append( "&include=stop,trip,route" )
+
+            
             // Valid parameters are Route and Vehicle ID
             if let route = query.data as? Route {
                 baseString.append( "&filter[route]=\(route.id.forURL)")
@@ -163,6 +166,7 @@ extension Query {
             
             if let trip = query.data as? Trip {
                 baseString.append( "&filter[trip]=\(trip.id.forURL)" )
+                break
             }
 
             fatalError( "Vehicle Query requires an ID, Route, or Trip.  data=\(String(describing: query.data))")

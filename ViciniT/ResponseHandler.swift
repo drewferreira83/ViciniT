@@ -144,11 +144,41 @@ extension ViciniT {
                 map.show( predictions: sorted, for: stop )
             }
             
+        case .stopsOfRouteType:
+            guard let stops = query.response as? [Stop] else {
+                fatalError( "/stopsOfRoutType returned something unexpected. \(query)")
+            }
+            
+            guard let filter = query.data as? String else {
+                fatalError( "Can't interpret filter for .stopsOfRouteType. \(query)" )
+            }
+            
+            var idSet = Set<String>()
+            
+            for stop in stops {
+                if stop.parentID == nil {
+                    idSet.insert( stop.id )
+                }
+            }
+            
+            switch filter {
+            case MBTA.stopType.subway:
+                Session.subwayStopIDs = idSet
+                
+            case MBTA.stopType.commRail:
+                Session.commRailIDs = idSet
+                
+            case MBTA.stopType.ferry:
+                Session.ferryIDs = idSet
+                
+            default:
+                fatalError( "Don't know filter for .stopsOfRouteType. \(query)" )
+            }
+            
         default:
             Debug.log( "Don't know what to do with Query \(query.kind)")
         }
     }
   
 }
-
 
