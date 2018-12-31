@@ -50,6 +50,12 @@ open class Vehicle: HasID {
             return route.directions[directionID]
         }
     }
+    
+    public var statusText: String {
+        get {
+            return (GTFS.VehicleStatusDescription[status] ?? "Status errror!") + " " +  (stop?.name ?? "")
+        }
+    }
 
     private var _isUnknown = false
     public var isUnknown: Bool {
@@ -105,7 +111,6 @@ open class Vehicle: HasID {
             if let jxRouteData = included.search( forKind: .route, id: routeID) {
                 self.route = Route(source: jxRouteData)
             }
-            print( "Loaded Vehicle included data." )
         }
 
         super.init( id: source.id )

@@ -38,12 +38,11 @@ open class Query: Hashable, CustomStringConvertible {
         case predictions // Stop
         case routes      // All, ID, or atStop
         case schedules
-        case stop // Requires stopID
         case allStopsInRegion       // All stops in a region
-        case majorStopsInRegion    // Only stations
+        case majorStopsInRegion    // Only CR and Subway
         case trips
-        case vehicles
-        case theseStops   // No parameters
+        case vehicles     // Trip, Route, or String:vehicleID
+        case theseStops   // String: Comma separated list of stop IDs
         
         case stopsOfRouteType // "0,1" for subway, "2" for CR
         

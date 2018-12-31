@@ -67,12 +67,13 @@ open class Mark: NSObject, MKAnnotation {
         // IF there is additional information about the vehicle...
         //  Title = Route Short Name + Trip Direction
         // Subtitle = Status + Stop
-        if let route = vehicle.route, let trip = vehicle.trip, let stop = vehicle.stop {
-            self.title = route.shortName + " " + route.directions[trip.dir] + " to " + trip.headsign
-            self.subtitle = vehicle.status.rawValue + " " + stop.name
+        if let route = vehicle.route, let trip = vehicle.trip {
+            self.title = route.mediumName + " " + vehicle.directionName + " to " + trip.headsign
+            self.subtitle = vehicle.statusText
         } else {
-            self.title = "No data"
-            self.subtitle = ""
+            self.title = "No data available"
+            
+            self.subtitle = "Sorry"
         }
 
         super.init()
@@ -172,4 +173,5 @@ extension UIImage {
         return newImage!
     }
 }
+
 

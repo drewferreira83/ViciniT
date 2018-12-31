@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A45699221DA785200AFB866 /* GTFS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A45699121DA785200AFB866 /* GTFS.swift */; };
 		3A47637F218215A90080AEB1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A47637E218215A90080AEB1 /* MapKit.framework */; };
 		3A476391218215DD0080AEB1 /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A476381218215DD0080AEB1 /* Query.swift */; };
 		3A476392218215DD0080AEB1 /* DateFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A476382218215DD0080AEB1 /* DateFactory.swift */; };
@@ -42,6 +43,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3A45699121DA785200AFB866 /* GTFS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTFS.swift; sourceTree = "<group>"; };
 		3A4763682182157F0080AEB1 /* ViciniT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViciniT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A4763772182157F0080AEB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3A47637E218215A90080AEB1 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
@@ -145,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				3A476382218215DD0080AEB1 /* DateFactory.swift */,
+				3A45699121DA785200AFB866 /* GTFS.swift */,
 				3A47638D218215DD0080AEB1 /* HasID.swift */,
 				3A47638A218215DD0080AEB1 /* JXObject.swift */,
 				3A476385218215DD0080AEB1 /* MURL.swift */,
@@ -265,6 +268,7 @@
 				3A47639B218215DD0080AEB1 /* Query Utilities.swift in Sources */,
 				3A4763BF218216070080AEB1 /* MapViewController.swift in Sources */,
 				3A4763BA218216070080AEB1 /* Mark.swift in Sources */,
+				3A45699221DA785200AFB866 /* GTFS.swift in Sources */,
 				3A476392218215DD0080AEB1 /* DateFactory.swift in Sources */,
 				3A47639C218215DD0080AEB1 /* HasID.swift in Sources */,
 				3A4763BE218216070080AEB1 /* MapViewDelegate.swift in Sources */,

@@ -52,6 +52,23 @@ public class Route: HasID {
         }
     }
     
+    public var mediumName: String {
+        guard let type = type else {
+            return "Unknown Route"
+        }
+        
+        switch type {
+        case .lightRail, .subway, .commuterRail:
+            return( longName )
+        case .bus, .ferry:
+            // The shortName is empty for Silver Line buses between South Station and Silver Line Way
+            if shortName.isEmpty {
+                return longName
+            }
+            return( shortName )
+        }
+    }
+    
     //  The shortest user readable string to identify this route.
     //  For bus, it is the id
     //  For heavyRail, it is the color, which currently is the ID.

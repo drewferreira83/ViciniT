@@ -90,7 +90,6 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     
     override func viewWillAppear(_ animated: Bool) {
         guard let stop = stop else {
-            print( "Predictions will appear before stop is set?" )
             return
         }
         stopNameLabel.text = stop.name
@@ -175,15 +174,13 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
         }
 
 
-        let query = Query(kind: .vehicles, data: prediction.route)
-        query.resume()
+        Query(kind: .vehicles, data: prediction.route).resume()
+        Query(kind: .theseStops, data: prediction.route).resume()
         
         dismiss()
-
     }
 
     public override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        print( "PREPARE!  \(segue) " )
         if segue.identifier == "" {
         }
     }

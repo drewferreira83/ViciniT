@@ -161,13 +161,8 @@ open class Prediction: HasID, Comparable {
         }
     }
     
-    public var vehicleStatus: String {
-        return (vehicle?.status.rawValue ?? "-")
-    }
-
     override public var description: String {
-         return "[PRE:\(route.fullName) " +
-               "\n  \(status) \(vehicleStatus)]"
+         return "[PRE:\(route.fullName)\n  \(status) \(vehicle?.statusText ?? "No Vehicle")]"
     }
 }
 

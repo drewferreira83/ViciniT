@@ -39,18 +39,25 @@ extension Query {
         {
 
         case .theseStops:
-            guard let idArray = query.data as? [String] else {
-                fatalError( "TheseStops query requires an array of stop IDs  \(String(describing:query.data))" )
-            }
-
-            guard !idArray.isEmpty else {
-                fatalError( "TheseStops query requires at least one stop ID" )
+            var filterString: String!
+            
+            guard query.data != nil else {
+                fatalError( "TheseStops requires a parameter" )
             }
             
+            if let idArray = query.data as? [String] {
+                filterString = "&filter[id]=\(idArray.joined(separator: ","))"
+            } else if let route = query.data as? Route {
+                filterString = "&filter[route]=\(route.id)"
+            } else {
+                fatalError( "TheseStops takes an array of stopID strings or a Route" )
+            }
+            
+
             baseString.append( "/stops")
             baseString.append( MBTA_KEY )
             baseString.append( "&include=parent_station" )
-            baseString.append( "&filter[id]=\(idArray.joined(separator: ","))")
+            baseString.append( filterString )
             
         
         case .stopsOfRouteType:
@@ -153,7 +160,7 @@ extension Query {
             baseString.append( "&include=stop,trip,route" )
 
             
-            // Valid parameters are Route and Vehicle ID
+            // Valid parameters are Route, Trip, or Vehicle ID
             if let route = query.data as? Route {
                 baseString.append( "&filter[route]=\(route.id.forURL)")
                 break

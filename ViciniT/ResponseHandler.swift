@@ -37,7 +37,7 @@ extension ViciniT {
             }
  */
 
-        case .stop, .allStopsInRegion, .majorStopsInRegion:
+        case .allStopsInRegion, .majorStopsInRegion:
             guard let stops = query.response as? [Stop] else {
                 fatalError( "/stops returned something unexpected.")
             }
@@ -126,8 +126,8 @@ extension ViciniT {
                 marks.append( Mark(vehicle: vehicle ) )
             }
             
-            map.display(marks: marks, kind: .vehicle, select: marks[0] )
-//            map.ensureVisible(marks: marks)
+            map.display(marks: marks, kind: .vehicle, select: nil)
+
         case .predictions:
             guard let predictions = query.response as? [Prediction] else {
                 fatalError( "/predictions returned something unexpected. \(query)")

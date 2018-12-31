@@ -205,8 +205,6 @@ class MapViewController: UIViewController, MapManager {
             // Add the new annotations
             self.mapView.addAnnotations(newMarks)
 
-            print( "Anno count = \(self.mapView.annotations.count)")
-            
             if let markToSelect = select {
                 self.mapView.showAnnotations(newMarks, animated: true)
                 //self.mapView.setCenter( markToSelect.coordinate, animated: true )
