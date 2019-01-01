@@ -58,7 +58,6 @@ extension ViciniT {
             map.display(marks: marks, kind: .stop, select: nil )
             
         case .theseStops:
-            // This will reset the
             guard let stops = query.response as? [Stop] else {
                 fatalError( ".theseStops returned something unexpected." )
             }

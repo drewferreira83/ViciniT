@@ -43,7 +43,6 @@ open class Query: Hashable, CustomStringConvertible {
         case trips
         case vehicles     // Trip, Route, or String:vehicleID
         case theseStops   // String: Comma separated list of stop IDs
-        
         case stopsOfRouteType // "0,1" for subway, "2" for CR
         
         case test

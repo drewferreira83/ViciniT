@@ -178,8 +178,9 @@ class MapViewController: UIViewController, MapManager {
         var removeMarks = [Mark]()
         for annotation in mapView.annotations {
             if let existingMark = annotation as? Mark {
-                // Does this Mark match the kind AND is not in the passed array of marks?
+                // Does this Mark match the kind AND ins't a favorite AND is not in the passed array of marks?
                 if existingMark.kind == kind &&
+                    !existingMark.isFavorite &&
                     (!marks.contains {
                         mark in
                         return mark == existingMark }) {
