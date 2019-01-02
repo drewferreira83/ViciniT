@@ -50,7 +50,8 @@ open class Query: Hashable, CustomStringConvertible {
     }
     
     public let kind: Kind
-    public let data: Any?
+    public let pData: Any?
+    public let uData: Any?
     public var response: Any?
     
     public var url: URL? = nil
@@ -61,11 +62,18 @@ open class Query: Hashable, CustomStringConvertible {
     public var received: Date?
     public var serverDate: Date?
     
-    init( kind: Kind, data: Any? = nil) {
+    
+    //  paramater Data is used to construct the query and has specific allowable formats.
+    //  usage data is not touched and preserved for the listener's use.
+    init( kind: Kind, parameterData: Any? = nil, usageData: Any? = nil) {
         self.kind = kind
-        self.data = data
+        self.pData = parameterData
+        self.uData = usageData
         self.id = Query.counter
         Query.counter += 1
+        
+        resume()
+        
     }
     
     public var hashValue: Int {

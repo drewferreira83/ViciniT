@@ -18,6 +18,9 @@ protocol MapManager {
 
     func ensureVisible( marks: [Mark])
     func display( marks: [Mark], kind: Mark.Kind, select: Mark?)
+    func add( marks: [Mark])
+    func remove( marks: [Mark])
+    
     func show( predictions: [Prediction], for stop: Stop )
     func show( routes: [Route], for stop: Stop )
     func setDataPending( _ state: Bool )
@@ -143,6 +146,22 @@ class MapViewController: UIViewController, MapManager {
     }
     
     
+    func add(marks: [Mark]) {
+        // Add these marks - don't do anything else.
+        DispatchQueue.main.async {
+            self.mapView.addAnnotations(marks)
+        }
+    }
+    
+    func remove(marks: [Mark]) {
+        DispatchQueue.main.async {
+            self.mapView.removeAnnotations(marks)
+        }
+    }
+    
+    func select(mark: Mark) {
+    }
+    
     // MAP REGION DOES NOT CHANGE:
     //This method will instruct the mapView to display the passed marks.
     // It will only add new Marks and it will remove any marks of the specified kind
@@ -175,7 +194,7 @@ class MapViewController: UIViewController, MapManager {
         }
         
         // Which marks should be removed?  Only remove those of the specified kind.
-        var removeMarks = [Mark]()
+        var invalidMarks = [Mark]()
         for annotation in mapView.annotations {
             if let existingMark = annotation as? Mark {
                 // Does this Mark match the kind AND ins't a favorite AND is not in the passed array of marks?
@@ -185,30 +204,17 @@ class MapViewController: UIViewController, MapManager {
                         mark in
                         return mark == existingMark }) {
                     // Slate this mark to be removed.
-                    removeMarks.append( existingMark )
+                    invalidMarks.append( existingMark )
                 }
             }
         }
         
-        DispatchQueue.main.async {
-            // Remove the annotations that are off-map.
-            self.mapView.removeAnnotations(removeMarks)
-            
-            /*
-            // Update the annotations that are still on the map.
-            for annotation in self.mapView.annotations {
-                if let markView = self.mapView.view(for: annotation) as? MarkView {
-                    markView.size = self.markViewSize
-                }
-            }
-            */
- 
-            // Add the new annotations
-            self.mapView.addAnnotations(newMarks)
-
-            if let markToSelect = select {
+        remove( marks: invalidMarks )
+        add( marks: newMarks )
+        
+        if let markToSelect = select {
+            DispatchQueue.main.async {
                 self.mapView.showAnnotations(newMarks, animated: true)
-                //self.mapView.setCenter( markToSelect.coordinate, animated: true )
                 
                 if let annotation = self.annotationForMark(mark: markToSelect) {
                     self.mapView.selectAnnotation(annotation, animated: true)
@@ -319,9 +325,7 @@ class MapViewController: UIViewController, MapManager {
         }
         
         let kind: Query.Kind = excludeBuses ? .majorStopsInRegion : .allStopsInRegion
-        let query = Query(kind: kind, data: mapView.region)
-    
-        query.resume()
+        _ = Query(kind: kind, parameterData: mapView.region)
     }
     
     func setDataPending( _ state: Bool ) {

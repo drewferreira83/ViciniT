@@ -23,7 +23,7 @@ extension ViciniT {
                 fatalError( "/stops returned something unexpected.")
             }
 
-            guard let region = query.data as? MKCoordinateRegion else {
+            guard let region = query.pData as? MKCoordinateRegion else {
                 fatalError( "/stops didn't have a MKCoordinateRegion. \(query)" )
             }
 
@@ -42,7 +42,7 @@ extension ViciniT {
                 fatalError( "/stops returned something unexpected.")
             }
 
-            guard let region = query.data as? MKCoordinateRegion else {
+            guard let region = query.pData as? MKCoordinateRegion else {
                 fatalError( "/stops didn't have a MKCoordinateRegion. \(query)" )
             }
 
@@ -63,24 +63,32 @@ extension ViciniT {
             }
             
             var marks = [Mark]()
+            var coords = [CLLocationCoordinate2D]()
+
             for stop in stops {
                 // Ignore child stations.
                 if stop.parentID == nil {
                     marks.append( Mark(stop: stop) )
+                    coords.append( stop.coordinate )
                 }
+            }
+            
+            if marks.isEmpty {
+                Debug.log("All stops returned are child stops?  Impossible!", flag: .minor)
+                return
+            }
+            
+            // The usage data is a Bool.  If true, then set map region to display all of these stops.  True is the default.
+            let showMarks = query.uData as? Bool ?? true
+            
+            if !showMarks {
+                //  Just add the marks to the map.
+                map.add( marks: marks )
+                return
             }
             
             // GOAL: Create MKCoordinateRegion that includes all stops.
 
-            // If we don't know the user location, update range to show all favorite stops.
-
-            // Create a temporary array of coordinates
-            var coords = [CLLocationCoordinate2D]()
-            
-            for stop in stops {
-                coords.append( stop.coordinate )
-            }
-            
             // Get the extrema for the lat and lng
             let minLat = coords.min { $0.latitude < $1.latitude }!.latitude
             let maxLat = coords.max { $0.latitude < $1.latitude }!.latitude
@@ -108,7 +116,7 @@ extension ViciniT {
             }
             
             // If these routes are for a particular stop, then display the routes.
-            if let stop = query.data as? Stop {
+            if let stop = query.pData as? Stop {
                 map.show(routes: routes, for: stop)
                 return
             }
@@ -132,7 +140,7 @@ extension ViciniT {
                 fatalError( "/predictions returned something unexpected. \(query)")
             }
             
-            if let stop = query.data as? Stop {
+            if let stop = query.pData as? Stop {
                 //  TODO:  Post message to user.
                 if predictions.isEmpty {
                     Debug.log( "No predictions for \(stop.name)" )
@@ -148,7 +156,7 @@ extension ViciniT {
                 fatalError( "/stopsOfRoutType returned something unexpected. \(query)")
             }
             
-            guard let filter = query.data as? String else {
+            guard let filter = query.pData as? String else {
                 fatalError( "Can't interpret filter for .stopsOfRouteType. \(query)" )
             }
             

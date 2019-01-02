@@ -39,8 +39,8 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
         }
 
         // Get predictions
-        let query =  Query(kind: .predictions, data: stop )
-        query.resume()
+        _ = Query(kind: .predictions, parameterData: stop )
+
     }
     
     // The current stop.
@@ -174,8 +174,8 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
         }
 
 
-        Query(kind: .vehicles, data: prediction.route).resume()
-        Query(kind: .theseStops, data: prediction.route).resume()
+        _ = Query(kind: .vehicles, parameterData: prediction.route)
+        _ = Query(kind: .theseStops, parameterData: prediction.route)
         
         dismiss()
     }

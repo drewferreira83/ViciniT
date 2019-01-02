@@ -139,8 +139,7 @@ extension ViciniT {
             }
             
             // Get predictions
-            let query =  Query(kind: .predictions, data: stop )
-            query.resume()
+            _ =  Query(kind: .predictions, parameterData: stop )
             
         default:
             Debug.log( "Selected detail of \(mark), but ignored" )
@@ -157,8 +156,7 @@ extension ViciniT {
             }
 
             // Get Routes at this stop.
-            let query = Query( kind: .routes, data: stop )
-            query.resume()
+            _ = Query( kind: .routes, parameterData: stop )
 
         default:
             Debug.log( "Selected \(mark), but ignored" )

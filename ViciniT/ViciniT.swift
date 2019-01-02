@@ -12,7 +12,7 @@ import MapKit
 public class ViciniT: NSObject, QueryListener {
     static public var share: ViciniT!
     
-       let map: MapManager!
+    let map: MapManager!
     
     init( mapManager: MapManager ) {
         self.map = mapManager
@@ -22,9 +22,11 @@ public class ViciniT: NSObject, QueryListener {
         ViciniT.share = self
         
         // Ask for list of subway stops and commuter rail stops.
-        Query(kind: .stopsOfRouteType, data: MBTA.stopType.subway).resume()
-        Query(kind: .stopsOfRouteType, data: MBTA.stopType.commRail).resume()
-        Query(kind: .stopsOfRouteType, data: MBTA.stopType.ferry).resume()
+        _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.stopType.subway)
+        _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.stopType.commRail)
+        _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.stopType.ferry)
+        
+        _ = Query(kind: .theseStops, parameterData: Array( UserSettings.shared.favoriteStops), usageData: false)
    }
     
     override public var description: String {
@@ -40,7 +42,7 @@ public class ViciniT: NSObject, QueryListener {
     }
 
     func showFavorites() {
-        Query(kind: .theseStops, data: Array(UserSettings.shared.favoriteStops)).resume()
+        _ = Query(kind: .theseStops, parameterData: Array(UserSettings.shared.favoriteStops))
     }
     
 }

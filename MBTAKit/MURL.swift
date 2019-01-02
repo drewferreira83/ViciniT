@@ -41,13 +41,13 @@ extension Query {
         case .theseStops:
             var filterString: String!
             
-            guard query.data != nil else {
+            guard query.pData != nil else {
                 fatalError( "TheseStops requires a parameter" )
             }
             
-            if let idArray = query.data as? [String] {
+            if let idArray = query.pData as? [String] {
                 filterString = "&filter[id]=\(idArray.joined(separator: ","))"
-            } else if let route = query.data as? Route {
+            } else if let route = query.pData as? Route {
                 filterString = "&filter[route]=\(route.id)"
             } else {
                 fatalError( "TheseStops takes an array of stopID strings or a Route" )
@@ -61,8 +61,8 @@ extension Query {
             
         
         case .stopsOfRouteType:
-            guard let routeTypesList = query.data as? String else {
-                fatalError( "StopsOfType query requires a string \(String(describing:query.data))" )
+            guard let routeTypesList = query.pData as? String else {
+                fatalError( "StopsOfType query requires a string \(String(describing:query.pData))" )
             }
             
             baseString.append( "/stops")
@@ -77,8 +77,8 @@ extension Query {
  
  */
         case .allStopsInRegion, .majorStopsInRegion:
-            guard let region = query.data as? MKCoordinateRegion else {
-                fatalError( "StopsInRegion query requires a region. \(String( describing: query.data ))")
+            guard let region = query.pData as? MKCoordinateRegion else {
+                fatalError( "StopsInRegion query requires a region. \(String( describing: query.pData ))")
             }
             
             baseString.append( "/stops")
@@ -115,17 +115,17 @@ extension Query {
             baseString.append( MBTA_KEY )
             baseString.append("&sort=sort_order")
             
-            if let routeID = query.data as? String {
+            if let routeID = query.pData as? String {
                 baseString.append( "&filter[id]=\(routeID.forURL)" )
                 break
             }
             
-            if let stop = query.data as? Stop {
+            if let stop = query.pData as? Stop {
                 baseString.append( "&filter[stop]=\(stop.id.forURL)")
                 break
             }
 
-            if query.data != nil {
+            if query.pData != nil {
                 fatalError( "Routes query has unexpected data. \(query)")
             }
             
@@ -134,25 +134,25 @@ extension Query {
             baseString.append( MBTA_KEY)
 
             // Trips take a tripID.
-            if let tripID = query.data as? String {
+            if let tripID = query.pData as? String {
                 baseString.append( "&filter[id]=\(tripID.forURL)")
                 break
                 
             }
             
-            if let route = query.data as? Route {
+            if let route = query.pData as? Route {
                 baseString.append( "&filter[route]=\(route.id.forURL)" )
                 break
             }
             
-            fatalError( "Trips query requires an ID or Route. data=\(String(describing:query.data))")
+            fatalError( "Trips query requires an ID or Route. data=\(String(describing:query.pData))")
             
         case .vehicles:
             baseString.append( "/vehicles" )
             baseString.append( MBTA_KEY)
 
             // No data means get all.
-            if query.data == nil {
+            if query.pData == nil {
                 break
             }
             
@@ -161,22 +161,22 @@ extension Query {
 
             
             // Valid parameters are Route, Trip, or Vehicle ID
-            if let route = query.data as? Route {
+            if let route = query.pData as? Route {
                 baseString.append( "&filter[route]=\(route.id.forURL)")
                 break
             }
             
-            if let id = query.data as? String {
+            if let id = query.pData as? String {
                 baseString.append( "&filter[id]=\(id.forURL)")
                 break
             }
             
-            if let trip = query.data as? Trip {
+            if let trip = query.pData as? Trip {
                 baseString.append( "&filter[trip]=\(trip.id.forURL)" )
                 break
             }
 
-            fatalError( "Vehicle Query requires an ID, Route, or Trip.  data=\(String(describing: query.data))")
+            fatalError( "Vehicle Query requires an ID, Route, or Trip.  data=\(String(describing: query.pData))")
             
         case .predictions:
             baseString.append("/predictions")
@@ -184,16 +184,16 @@ extension Query {
             //baseString.append( "&sort=departure_time,arrival_time")
             baseString.append( "&include=route,stop,trip,vehicle,schedule" )
 
-            if let stop = query.data as? Stop {
+            if let stop = query.pData as? Stop {
                 baseString.append( "&filter[stop]=\(stop.id.forURL)")
                 
-            } else if let coords = query.data as? CLLocationCoordinate2D {
+            } else if let coords = query.pData as? CLLocationCoordinate2D {
                 baseString.append( "&filter[latitude]=\(coords.latitude)" )
                 baseString.append( "&filter[longitude]=\(coords.longitude)" )
 //                baseString.append( "&filter[radius]=0.01" )
                 
             } else {
-                fatalError( "Prediction Query requires Stop. data=\(String(describing:query.data))")
+                fatalError( "Prediction Query requires Stop. data=\(String(describing:query.pData))")
             }
             
         default:

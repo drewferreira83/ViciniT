@@ -19,6 +19,10 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     @IBOutlet weak var feedbackButton: UIButton!
     @IBOutlet weak var infoWebView: WKWebView!
     
+    @IBAction func modalDismissed(_ sender: UIStoryboardSegue) {
+        print( "modal was dismissed.")
+    }
+    
     var routeTypes = UserSettings.shared.routeTypes
     
     @IBAction func feedbackButtonPressed(_ sender: Any) {
@@ -80,6 +84,8 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         
         super.viewDidLoad()
     }
+    
+    
     
     func updateImages() {
         let subwayImage = routeTypes[1] ? Images.subwayTrue : Images.subwayFalse
