@@ -155,8 +155,21 @@ extension Query {
             queries.removeAll(keepingCapacity: false)
         }
         
-        func overdue( since: Date ) {
-            // THis will return overdue queries
+        // This returns queries that are over the specified timeout.  This does not remove them.
+        func overdue( timeout: TimeInterval ) -> [Query] {
+            var overdueQueries = [Query]()
+            
+            for query in queries {
+                guard let issued = query.issued else {
+                    continue
+                }
+                
+                if issued.timeIntervalSinceNow > timeout {
+                    overdueQueries.append(query)
+                }
+            }
+            
+            return overdueQueries
         }
     }
 }

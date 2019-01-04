@@ -41,6 +41,9 @@ class MapViewController: UIViewController, MapManager {
     @IBOutlet weak var bannerLabel: UILabel!
     @IBOutlet weak var busyIndicator: UIActivityIndicatorView!
     @IBOutlet weak var searchButton: UIButton!
+    @IBOutlet weak var searchLabelButton: UIButton!
+    
+    @IBOutlet weak var searchBox: UIView!
     
     var userChangedRegion: Bool {
         get { return _userChangedRegion }
@@ -297,6 +300,8 @@ class MapViewController: UIViewController, MapManager {
         updateMapElements()
     }
     
+    var searchLabelTimer: Timer?
+    
     func updateMapElements() {
         mapView.showsTraffic = UserSettings.shared.showsTraffic
 
@@ -317,12 +322,38 @@ class MapViewController: UIViewController, MapManager {
             self.favoriteButton.isHidden = hideFavoriteButton
             self.buttonBox.alpha = hideButtonBox ? 0.0 : 1.0
         }
-        
+
         // Note regarding animation of the buttons and its container:
         //   The buttons are inside a stackview which takes care of sizing itself when child objects are added/removed/hidden.
         //   This is why the buttons are toggled by changing the .isHidden component.
         //   The buttonBox is a generic UIView.  If the buttonBox is hidden, the stackview will not resize based on changes in
         //   its children.  This is why to hide the buttonBox, we change its .alpha component.
+        
+        
+        // SEARCH BOX
+        
+        if userChangedRegion {
+            // If the search box is invisilble, then fade it in.
+            if searchBox.alpha == 0.0 {
+                searchLabelButton.isHidden = false
+                searchBox.fadeIn()
+            
+                // If there is no current timer, then make one that will hide the help message in a few seconds.
+                if searchLabelTimer == nil {
+                    searchLabelTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ -> Void in
+                        UIView.animate(withDuration: 0.25) { () -> Void in
+                            self.searchLabelButton.isHidden = true
+                        }
+                        
+                        self.searchLabelTimer = nil
+                    }
+                }
+            }
+        } else {
+            searchBox.fadeOut()
+        }
+
+        
     }
   
     func refreshStops() {
@@ -330,7 +361,12 @@ class MapViewController: UIViewController, MapManager {
         
         if excludeBuses && UserSettings.shared.routeTypes[GTFS.RouteType.bus.rawValue] && !zoomMessageDismissed {
             bannerLabel.text = "Zoom in to see bus stops"
+            print( "Banner fade in." )
             bannerBox.fadeIn()
+            _ = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: false ) { _ in
+                print( "Banner fade out.")
+                self.bannerBox.fadeOut()
+            }
         } else {
             bannerBox.fadeOut()
         }

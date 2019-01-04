@@ -62,6 +62,11 @@ open class Query: Hashable, CustomStringConvertible {
     public var received: Date?
     public var serverDate: Date?
     
+    private var _error: String?
+    public var error: String? {
+        get { return _error }
+    }
+    
     
     //  paramater Data is used to construct the query and has specific allowable formats.
     //  usage data is not touched and preserved for the listener's use.
@@ -72,8 +77,19 @@ open class Query: Hashable, CustomStringConvertible {
         self.id = Query.counter
         Query.counter += 1
         
-        resume()
-        
+        if let url = Query.makeURL(query: self) {
+            Debug.log( " -> \(self)", flag: .important)
+            
+            // Update and track Query.
+            issued = Date()
+            Query.activeQueries.track(query: self)
+            Query.listener.dataPendingUpdate(busy: true)
+            
+            // Create and issue request.
+            URLSession.shared.dataTask(with: url, completionHandler: MBTAresponseHandler).resume()
+        } else {
+            fatalError( "MURL Error!  \(self)")
+        }
     }
     
     public var hashValue: Int {
@@ -107,25 +123,5 @@ open class Query: Hashable, CustomStringConvertible {
         return lhs.url != rhs.url
     }
     
-    
-    // Issue the query
-    @discardableResult public func resume() -> Bool {
-        
-        if let url = Query.makeURL(query: self) {
-            Debug.log( " -> \(self)", flag: .important)
-            //Debug.log( url.relativeString )
-
-            // Update and track Query.
-            issued = Date()
-            Query.activeQueries.track(query: self)
-            Query.listener.dataPendingUpdate(busy: true)
-
-            // Create and issue request.
-            URLSession.shared.dataTask(with: url, completionHandler: MBTAresponseHandler).resume()
-            return( true )
-        }
-        
-        fatalError( "MURL Error!  \(self)")
-    }
-    
+ 
 }
