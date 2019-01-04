@@ -40,10 +40,24 @@ class MapViewController: UIViewController, MapManager {
     @IBOutlet weak var bannerBox: UIView!
     @IBOutlet weak var bannerLabel: UILabel!
     @IBOutlet weak var busyIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var searchButton: UIButton!
+    
+    var userChangedRegion: Bool {
+        get { return _userChangedRegion }
+        set (value) {
+            _userChangedRegion = value
+            updateMapElements()
+        }
+    }
     
     @IBAction func dismissBannerBox(_ sender: Any) {
-        Session.zoomInForBuses = true
+        zoomMessageDismissed = true
         bannerBox.fadeOut()
+    }
+    
+    @IBAction func searchForStops(_ sender: Any) {
+        refreshStops()
+        
     }
     
     @IBAction func showFavorites(_ sender: Any) {
@@ -68,6 +82,8 @@ class MapViewController: UIViewController, MapManager {
     var userInitiatedRegionChange = false
     var forceShowStops = false
     var refreshStopsOnReturn = false
+    var zoomMessageDismissed = false
+    var _userChangedRegion = false
     //var markViewSize = MarkView.Size.medium
     
     override func viewDidLoad() {
@@ -77,7 +93,10 @@ class MapViewController: UIViewController, MapManager {
         
         // Not 100% sure what register does, it is new with iOS 11...
         mapView.register(MarkView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
-        
+
+        mapView.mapType = .mutedStandard
+        mapView.showsScale = true
+        mapView.showsTraffic = UserSettings.shared.showsTraffic
 
         // Start functionality.
         Query.routeTypes = UserSettings.shared.routeTypes
@@ -212,15 +231,11 @@ class MapViewController: UIViewController, MapManager {
         remove( marks: invalidMarks )
         add( marks: newMarks )
         
+        // If we're given a mark to select...
         if let markToSelect = select {
             DispatchQueue.main.async {
                 self.mapView.showAnnotations(newMarks, animated: true)
-                
-                if let annotation = self.annotationForMark(mark: markToSelect) {
-                    self.mapView.selectAnnotation(annotation, animated: true)
-                } else {
-                    Debug.log( "Could not find actual annotation in mapView for \(markToSelect).", flag: .error )
-                }
+                self.mapView.selectAnnotation(markToSelect, animated: true)
             }
         }
     }
@@ -259,24 +274,7 @@ class MapViewController: UIViewController, MapManager {
     func ensureVisible(marks: [Mark]) {
         mapView.showAnnotations(marks, animated: true)
     }
-    
-    // TODO:  Implement UI to change settings.
-    func set( mapOptions: UserSettings.MapOptions ) {
-        // Not changable.
-        mapView.isZoomEnabled = true
-        mapView.isScrollEnabled = true
-        mapView.isPitchEnabled = false
-        mapView.isRotateEnabled = false
-        mapView.showsCompass = false
 
-        // Changable settings
-        mapView.mapType = mapOptions.mapType
-        mapView.showsPointsOfInterest = mapOptions.showsPointsOfInterest
-        mapView.showsBuildings = mapOptions.showsBuildings
-        mapView.showsScale = mapOptions.showsScale
-        mapView.showsTraffic = mapOptions.showsTraffic
-    }
-    
     // The selectedMarkView might need to be redrawn if its favorite status changed.
     //  The showFavoritesButton is shown if there are favorites.
     override func viewWillAppear(_ animated: Bool) {
@@ -290,34 +288,36 @@ class MapViewController: UIViewController, MapManager {
             refreshStops()
         }
         
-        updateButtonBox()
+        updateMapElements()
     }
     
     // Called from AppDelegate when App comes back to foreground
     func didBecomeActive() {
         predictionsViewController.reloadPressed( self ) // NOOP if predictions isn't up
-        updateButtonBox()
+        updateMapElements()
     }
     
-    func updateButtonBox() {
+    func updateMapElements() {
         favoriteButton.isHidden = UserSettings.shared.favoriteStops.isEmpty
+        mapView.showsTraffic = UserSettings.shared.showsTraffic
 
-        // Validate user tracking. The user may have changed settings within the map or directly through Device Settings.
+        // Validate user tracking. The user may have changed in-app settings or directly through Device Settings.
         mapView.showsUserLocation = UserSettings.shared.trackUser && Default.Location.accessible
 
         // Hide the location button if any is true:
         //   MapView isn't showing user location (validation above checks both app flag and device privs)
         //   The user location is currently visible
-
         locationButton.isHidden =  !mapView.showsUserLocation || mapView.isUserLocationVisible
-        
-        buttonBox.isHidden = (locationButton.isHidden && favoriteButton.isHidden)
+        searchButton.isHidden = !userChangedRegion
+
+        // Hide the entire box if no buttons are needed.
+        buttonBox.isHidden = (locationButton.isHidden && favoriteButton.isHidden && searchButton.isHidden)
     }
   
     func refreshStops() {
         let excludeBuses = mapView.region.span.maxDelta > 0.04
         
-        if excludeBuses && UserSettings.shared.routeTypes[GTFS.RouteType.bus.rawValue] && !Session.zoomInForBuses {
+        if excludeBuses && UserSettings.shared.routeTypes[GTFS.RouteType.bus.rawValue] && !zoomMessageDismissed {
             bannerLabel.text = "Zoom in to see bus stops"
             bannerBox.fadeIn()
         } else {
@@ -326,6 +326,7 @@ class MapViewController: UIViewController, MapManager {
         
         let kind: Query.Kind = excludeBuses ? .majorStopsInRegion : .allStopsInRegion
         _ = Query(kind: kind, parameterData: mapView.region)
+        userChangedRegion = false
     }
     
     func setDataPending( _ state: Bool ) {

@@ -24,25 +24,10 @@ class MarkView: MKAnnotationView {
     static let Identifier = "MarkView"
     let detailLabel = UILabel()
     
-    var _size = Size.medium
-    var size: Size {
-        set (value) {
-            if value != _size {
-                setNeedsDisplay()
-            }
-            _size = value
-        }
-        
-        get {
-            return _size
-        }
-    }
-    
-    var mark: Mark? {
-        return annotation as? Mark
-    }
+    var mark: Mark!
     
     init( mark: Mark ) {
+        self.mark = mark
         super.init(annotation: mark, reuseIdentifier: MarkView.Identifier)
         
         isOpaque = false
@@ -52,7 +37,6 @@ class MarkView: MKAnnotationView {
         detailLabel.font = Default.Font.forCalloutSubtitle
         detailLabel.numberOfLines = 0
         detailLabel.lineBreakMode = .byWordWrapping
-        rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -65,18 +49,14 @@ class MarkView: MKAnnotationView {
     
     override func prepareForDisplay() {
         
-        // Probably won't happen, and it's not a bad thing if it does.  Just ignore it.
-        guard let mark = mark else {
-            Debug.log( "Annotation not a Mark: \(String(describing: annotation))")
-            return
-        }
-        
         var newImage : UIImage!
 
         switch (mark.kind) {
         case .stop where mark.isFavorite:
             // Favorite Stops...
             newImage = Images.favoriteStop20
+            rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+
 
         case .stop:
             if Session.subwayStopIDs.contains(mark.stop!.id) {
@@ -86,12 +66,13 @@ class MarkView: MKAnnotationView {
             } else {
                 newImage = Images.stop08
             }
-
+            rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
             
         case .vehicle:
             // Vehicles
             newImage = Images.vehicle12
             newImage = newImage.rotate( byDegrees: mark.rotation)
+            rightCalloutAccessoryView = nil
         }
         
         self.image = newImage
@@ -107,6 +88,7 @@ class MarkView: MKAnnotationView {
 
     override func prepareForReuse() {
         detailCalloutAccessoryView = nil
+        image = nil
     }
  
     deinit {

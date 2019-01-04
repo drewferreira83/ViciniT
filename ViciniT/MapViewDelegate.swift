@@ -82,7 +82,9 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
         if let gestureRecognizers = view.gestureRecognizers {
             for recognizer in gestureRecognizers {
                 if( recognizer.state == UIGestureRecognizer.State.began || recognizer.state == UIGestureRecognizer.State.ended ) {
-                    return true
+                    userChangedRegion = true
+                    return false
+                    //return true
                 }
             }
         }
@@ -94,7 +96,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
 
     }
 
-    // The map's region has changed.  If the user initiates the change, then animated is false.
+    // The map's region has changed.  
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         // Update the stops, if appropriate.
         if userInitiatedRegionChange || forceShowStops {
@@ -102,7 +104,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
             refreshStops()
         }
 
-        updateButtonBox()
+        updateMapElements()
     }
     
     // NB:  If the user changes location privs directly in Settings, this method is called when the app is made active again.
@@ -117,7 +119,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
             if let newCenter = Default.Location.manager.location?.coordinate {
                 self.forceShowStops = true
                 self.mapView.setCenter( newCenter, animated: true )
-                self.updateButtonBox()
+                self.updateMapElements()
             }
         }
     }

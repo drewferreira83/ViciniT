@@ -26,7 +26,10 @@ public class ViciniT: NSObject, QueryListener {
         _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.stopType.commRail)
         _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.stopType.ferry)
         
-        _ = Query(kind: .theseStops, parameterData: Array( UserSettings.shared.favoriteStops), usageData: false)
+        // Ask for favorite stops, if any.
+        if !UserSettings.shared.favoriteStops.isEmpty {
+            _ = Query(kind: .theseStops, parameterData: Array( UserSettings.shared.favoriteStops), usageData: false)
+        }
    }
     
     override public var description: String {

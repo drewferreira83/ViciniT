@@ -33,6 +33,9 @@ public struct Default {
         public static let BOSTON = CLLocationCoordinate2D( latitude: 42.36, longitude: -71.062)
         public static let DAVIS = CLLocationCoordinate2D( latitude: 42.40, longitude: -71.122299)
         public static let manager = CLLocationManager()
+        public static var enabled: Bool {
+            return CLLocationManager.locationServicesEnabled()
+        }
         public static var accessible: Bool {
             return CLLocationManager.locationServicesEnabled() &&
                 (CLLocationManager.authorizationStatus() == .authorizedAlways ||
@@ -85,8 +88,6 @@ public struct Strings {
 }
 
 public struct Session {
-    public static var zoomInForBuses = false
-    
     public static var subwayStopIDs = Set<String>()
     public static var commRailIDs = Set<String>()
     public static var ferryIDs = Set<String>()

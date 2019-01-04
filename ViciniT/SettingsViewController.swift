@@ -18,6 +18,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     @IBOutlet weak var busButton: UIButton!
     @IBOutlet weak var feedbackButton: UIButton!
     @IBOutlet weak var infoWebView: WKWebView!
+    @IBOutlet weak var showTrafficSwitch: UISwitch!
     
     @IBAction func modalDismissed(_ sender: UIStoryboardSegue) {
         print( "modal was dismissed.")
@@ -52,6 +53,10 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         UserSettings.shared.trackUser = sender.isOn
     }
     
+    @IBAction func showTrafficChanged(_ sender: UISwitch) {
+        UserSettings.shared.showsTraffic = sender.isOn
+    }
+    
     @IBAction func routeTypeChanged(_ sender: UIButton) {
         let index = sender.tag
         routeTypes[ index ] = !routeTypes[ index ]
@@ -68,8 +73,16 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        // Enabled the Feedback button only if the mail sysytem is available
         feedbackButton.isEnabled = MFMailComposeViewController.canSendMail()
+        
+        // Enable the track user button only if User has given permission to location
+        // Turn the switch on only if we have permission and the user flag is set.
         trackUserSwitch.isEnabled = Default.Location.accessible
+        trackUserSwitch.isOn = Default.Location.accessible && UserSettings.shared.trackUser
+        
+        showTrafficSwitch.isOn = UserSettings.shared.showsTraffic
+
         updateImages()
         super.viewWillAppear(animated)
     }

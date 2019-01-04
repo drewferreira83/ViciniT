@@ -46,6 +46,9 @@ extension Query {
             }
             
             if let idArray = query.pData as? [String] {
+                if idArray.isEmpty {
+                    Debug.log( "TheseStops got an empty array of ids." )
+                }
                 filterString = "&filter[id]=\(idArray.joined(separator: ","))"
             } else if let route = query.pData as? Route {
                 filterString = "&filter[route]=\(route.id)"

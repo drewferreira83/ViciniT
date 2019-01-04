@@ -12,36 +12,16 @@ import MapKit
 
 class UserSettings: NSObject {
     static let shared = UserSettings()
-    
-    struct MapOptions: Codable {
-        private var _mapTypeRawValue: UInt = 0
-        var mapType: MKMapType {
-            get {
-                return MKMapType( rawValue: _mapTypeRawValue ) ?? .standard
-            }
-            
-            set (value) {
-                _mapTypeRawValue = value.rawValue
-            }
-        }
-
-        var showsPointsOfInterest = true
-        var showsBuildings        = true
-        var showsScale            = true
-        var showsTraffic          = true
-        var shows3DView           = false
-        var allowsRotation        = false
-    }
 
     private var defaults = UserDefaults.standard
 
-    var mapOptions: MapOptions {
+    var showsTraffic: Bool {
         set (value) {
-            defaults.set( value, forKey: "mapOptions" )
+            defaults.set( value, forKey: "showsTraffic" )
         }
         
         get {
-            return (defaults.object( forKey: "mapOptions" ) as? MapOptions) ?? MapOptions()
+            return defaults.bool(forKey: "showsTraffic" )
         }
     }
     
