@@ -298,20 +298,31 @@ class MapViewController: UIViewController, MapManager {
     }
     
     func updateMapElements() {
-        favoriteButton.isHidden = UserSettings.shared.favoriteStops.isEmpty
         mapView.showsTraffic = UserSettings.shared.showsTraffic
 
         // Validate user tracking. The user may have changed in-app settings or directly through Device Settings.
         mapView.showsUserLocation = UserSettings.shared.trackUser && Default.Location.accessible
 
+        // BUTTON BOX
+        
         // Hide the location button if any is true:
         //   MapView isn't showing user location (validation above checks both app flag and device privs)
         //   The user location is currently visible
-        locationButton.isHidden =  !mapView.showsUserLocation || mapView.isUserLocationVisible
-        searchButton.isHidden = !userChangedRegion
+        let hideLocationButton = !mapView.showsUserLocation || mapView.isUserLocationVisible
+        let hideFavoriteButton = UserSettings.shared.favoriteStops.isEmpty
+        let hideButtonBox = hideLocationButton && hideFavoriteButton
 
-        // Hide the entire box if no buttons are needed.
-        buttonBox.isHidden = (locationButton.isHidden && favoriteButton.isHidden && searchButton.isHidden)
+        UIView.animate(withDuration: 0.5) {() -> Void in
+            self.locationButton.isHidden = hideLocationButton
+            self.favoriteButton.isHidden = hideFavoriteButton
+            self.buttonBox.alpha = hideButtonBox ? 0.0 : 1.0
+        }
+        
+        // Note regarding animation of the buttons and its container:
+        //   The buttons are inside a stackview which takes care of sizing itself when child objects are added/removed/hidden.
+        //   This is why the buttons are toggled by changing the .isHidden component.
+        //   The buttonBox is a generic UIView.  If the buttonBox is hidden, the stackview will not resize based on changes in
+        //   its children.  This is why to hide the buttonBox, we change its .alpha component.
     }
   
     func refreshStops() {
@@ -331,11 +342,7 @@ class MapViewController: UIViewController, MapManager {
     
     func setDataPending( _ state: Bool ) {
         DispatchQueue.main.async {
-            if state {
-                self.busyIndicator.startAnimating()
-            } else {
-                self.busyIndicator.stopAnimating()
-            }
+            state ? self.busyIndicator.startAnimating() : self.busyIndicator.stopAnimating()
         }
     }
     
