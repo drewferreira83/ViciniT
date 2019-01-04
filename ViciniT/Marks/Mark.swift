@@ -19,7 +19,6 @@ open class Mark: NSObject, MKAnnotation {
     public let location: CLLocation
     public let title: String?
     public var subtitle: String?
-//    public var scopeLevel = Scope.Level.normal
     
     public let stop: Stop?
     public let vehicle: Vehicle?

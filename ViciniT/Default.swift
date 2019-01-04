@@ -43,6 +43,7 @@ public struct Default {
         }
     }
     
+    public static let aniDuration = 0.5  // Map Elements that animate will use this for duration in animation loop
 }
 
 public struct Images {

@@ -74,7 +74,6 @@ extension ViciniT {
             }
             
             if marks.isEmpty {
-                Debug.log("All stops returned are child stops?  Impossible!", flag: .minor)
                 return
             }
             

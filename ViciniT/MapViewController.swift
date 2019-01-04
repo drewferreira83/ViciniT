@@ -91,29 +91,32 @@ class MapViewController: UIViewController, MapManager {
     
     override func viewDidLoad() {
         MapViewController.shared = self
-        
-        super.viewDidLoad()
-        
+        vicinit = ViciniT( mapManager: self )
+
         // Not 100% sure what register does, it is new with iOS 11...
         mapView.register(MarkView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
 
+        // Map Attributes that aren't changabled.
         mapView.mapType = .mutedStandard
         mapView.showsScale = true
-        mapView.showsTraffic = UserSettings.shared.showsTraffic
 
-        // Start functionality.
+
+        // Get User settings...
         Query.routeTypes = UserSettings.shared.routeTypes
-        vicinit = ViciniT( mapManager: self )
         mapView.delegate = self
-        locationButton.isHidden = true
-        
+
+        // Init UI elements
+        buttonBox.alpha = 0.0
         bannerBox.alpha = 0.0
-        bannerLabel.preferredMaxLayoutWidth = UIScreen.main.bounds.width - 60 // Padding and cancel button
+        bannerLabel.preferredMaxLayoutWidth = UIScreen.main.bounds.width - 60 // Padding and cancel button\
+        updateMapElements()
         
+        // Create the Predictions View Controller.
         let mainStoryboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         predictionsNavVC = mainStoryboard.instantiateViewController(withIdentifier: "PredictionsNavVC") as? UINavigationController
         predictionsViewController = predictionsNavVC.viewControllers[0] as? PredictionViewController
     
+        //  Check on location services and permission.
         Default.Location.manager.delegate = self
         Default.Location.manager.desiredAccuracy = kCLLocationAccuracyBest
         Default.Location.manager.distanceFilter = 50.0
@@ -141,6 +144,8 @@ class MapViewController: UIViewController, MapManager {
         }
         
         mapView.setRegion( startRegion, animated: false )
+        
+        super.viewDidLoad()
     }
     
      override func didReceiveMemoryWarning() {
@@ -153,20 +158,6 @@ class MapViewController: UIViewController, MapManager {
     func getUserLocation() -> CLLocationCoordinate2D? {
         return Default.Location.manager.location?.coordinate
     }
-
-    // Returns the actual MKAnnotation used in the MapView that matches the passed Mark object.
-    private func annotationForMark( mark: Mark ) -> MKAnnotation? {
-        for annotation in mapView.annotations {
-            if let actualAnnotation = annotation as? Mark {
-                if actualAnnotation == mark {
-                    return actualAnnotation
-                }
-            }
-        }
-        
-        return nil
-    }
-    
     
     func add(marks: [Mark]) {
         // Add these marks - don't do anything else.
@@ -189,17 +180,6 @@ class MapViewController: UIViewController, MapManager {
     // It will only add new Marks and it will remove any marks of the specified kind
     // that are not in the passed array.
     func display( marks: [Mark], kind: Mark.Kind, select: Mark? = nil ) {
-/*
-        switch marks.count {
-        case 0...8:
-            markViewSize = .large
-        case 9...40:
-            markViewSize = .medium
-        default:
-            markViewSize = .small
-        }
-*/
-        
         // Which marks do we need to add to the existing annotations?
         var newMarks = [Mark]()
         for mark in marks {
@@ -260,7 +240,7 @@ class MapViewController: UIViewController, MapManager {
             return
         }
 
-        guard markView.mark?.stop == stop else {
+        guard markView.mark.stop == stop else {
             Debug.log( "Got routes for stop \(stop), but that mark isn't currently selected.", flag: .error )
             return
         }
@@ -317,7 +297,7 @@ class MapViewController: UIViewController, MapManager {
         let hideFavoriteButton = UserSettings.shared.favoriteStops.isEmpty
         let hideButtonBox = hideLocationButton && hideFavoriteButton
 
-        UIView.animate(withDuration: 0.5) {() -> Void in
+        UIView.animate(withDuration: Default.aniDuration) {() -> Void in
             self.locationButton.isHidden = hideLocationButton
             self.favoriteButton.isHidden = hideFavoriteButton
             self.buttonBox.alpha = hideButtonBox ? 0.0 : 1.0
@@ -341,7 +321,7 @@ class MapViewController: UIViewController, MapManager {
                 // If there is no current timer, then make one that will hide the help message in a few seconds.
                 if searchLabelTimer == nil {
                     searchLabelTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ -> Void in
-                        UIView.animate(withDuration: 0.25) { () -> Void in
+                        UIView.animate(withDuration: Default.aniDuration) { () -> Void in
                             self.searchLabelButton.isHidden = true
                         }
                         
@@ -361,10 +341,8 @@ class MapViewController: UIViewController, MapManager {
         
         if excludeBuses && UserSettings.shared.routeTypes[GTFS.RouteType.bus.rawValue] && !zoomMessageDismissed {
             bannerLabel.text = "Zoom in to see bus stops"
-            print( "Banner fade in." )
             bannerBox.fadeIn()
             _ = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: false ) { _ in
-                print( "Banner fade out.")
                 self.bannerBox.fadeOut()
             }
         } else {

@@ -24,10 +24,11 @@ class MarkView: MKAnnotationView {
     static let Identifier = "MarkView"
     let detailLabel = UILabel()
     
-    var mark: Mark!
+    var mark: Mark {
+        return annotation as! Mark
+    }
     
     init( mark: Mark ) {
-        self.mark = mark
         super.init(annotation: mark, reuseIdentifier: MarkView.Identifier)
         
         isOpaque = false
@@ -48,28 +49,24 @@ class MarkView: MKAnnotationView {
     }
     
     override func prepareForDisplay() {
-        
         var newImage : UIImage!
 
-        switch (mark.kind) {
-        case .stop where mark.isFavorite:
-            // Favorite Stops...
-            newImage = Images.favoriteStop20
-            rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
-
-
-        case .stop:
-            if Session.subwayStopIDs.contains(mark.stop!.id) {
+        if mark.kind == .stop {
+            if mark.isFavorite {
+                newImage = Images.favoriteStop20
+            } else if Session.subwayStopIDs.contains(mark.stop!.id) {
                 newImage = Images.stop12
             } else if Session.commRailIDs.contains(mark.stop!.id) {
                 newImage = Images.stopRail12
             } else {
                 newImage = Images.stop08
             }
-            rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
             
-        case .vehicle:
-            // Vehicles
+            if rightCalloutAccessoryView == nil {
+                rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+            }
+        } else {
+            // Vehicle.
             newImage = Images.vehicle12
             newImage = newImage.rotate( byDegrees: mark.rotation)
             rightCalloutAccessoryView = nil
@@ -86,14 +83,10 @@ class MarkView: MKAnnotationView {
         }
     }
 
-    override func prepareForReuse() {
-        detailCalloutAccessoryView = nil
-        image = nil
-    }
- 
     deinit {
         detailCalloutAccessoryView = nil
         image = nil
+        rightCalloutAccessoryView = nil
     }
     
 }

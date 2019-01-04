@@ -35,9 +35,8 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
     public func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let markView = view as? MarkView {
             selectedMarkView = markView
-            if let mark = markView.mark {
-                vicinit.didSelect( mark: mark )
-            }
+            vicinit.didSelect( mark: markView.mark )
+            
         }
     }
     
@@ -48,9 +47,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
                 selectedMarkView = nil
             }
             
-            if let mark = markView.mark {
-                vicinit.didDeselect( mark: mark )
-            }
+            vicinit.didDeselect( mark: markView.mark )
         }
     }
 
@@ -58,9 +55,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
     //  Tapping on the simple bubble on an anno will trigger the detail to appear at the bottom of the screen.
     public func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if let markView = view as? MarkView {
-            if let mark = markView.mark {
-                vicinit.didSelectDetail( mark: mark )
-            }
+            vicinit.didSelectDetail( mark: markView.mark )
         }
     }
     
