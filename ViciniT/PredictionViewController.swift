@@ -19,32 +19,33 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
         dismiss()
     }
     
+    // The current Mark
+    var mark: Mark!
+    
     private func dismiss() {
         navigationController?.dismiss(animated: true, completion: nil)
-        stop = nil
+        mark = nil
     }
     
     // The user toggled the favorite in the Nav Controller of the Predictions View.
     @IBAction func toggleFavorite(_ sender: Any) {
-        guard let stop = stop else {
+        guard let stop = mark?.stop else {
             return
         }
+        
         stop.isFavorite = !stop.isFavorite
         updateFavoriteButton()
     }
     
     @IBAction func reloadPressed(_ sender: Any) {
-        guard let stop = stop else {
+        guard let stop = mark?.stop else {
             return
         }
 
         // Get predictions
-        _ = Query(kind: .predictions, parameterData: stop )
+        _ = Query(kind: .predictions, parameterData: stop, usageData: mark )
 
     }
-    
-    // The current stop.
-    var stop: Stop?
     
     // Predictions should already be sorted by route and departure time.
     // Currently discarding arrival times...
@@ -53,8 +54,8 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     var predsByRoute = [RoutePrediction]()
     
     
-    func setPredictions( _ predictions: [Prediction], for stop: Stop) {
-        self.stop = stop
+    func setPredictions( _ predictions: [Prediction], for mark: Mark) {
+        self.mark = mark
        
         predsByRoute.removeAll()
         
@@ -80,7 +81,7 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func updateFavoriteButton() {
-        guard let stop = stop else {
+        guard let stop = mark?.stop else {
             return
         }
         
@@ -89,7 +90,7 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        guard let stop = stop else {
+        guard let stop = mark?.stop else {
             return
         }
         stopNameLabel.text = stop.name
@@ -280,7 +281,7 @@ extension Prediction {
 extension Stop {
     var isFavorite: Bool {
         get {
-            return UserSettings.shared.favoriteStops.contains( id )
+            return UserSettings.shared.favoriteIDs.contains( id )
         }
         
         set (value) {

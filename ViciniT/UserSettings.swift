@@ -55,35 +55,35 @@ class UserSettings: NSObject {
     }
     
     //  FAVORITE STOPS
-    var favoriteStops: Set<String> {
+    var favoriteIDs: Set<String> {
         set (value) {
-            defaults.set( Array(value), forKey: "favoriteStops" )
+            defaults.set( Array(value), forKey: "favoriteIDs" )
         }
 
         get {
-            let strArray = defaults.stringArray(forKey: "favoriteStops") ?? Strings.emptyArray
+            let strArray = defaults.stringArray(forKey: "favoriteIDs") ?? Strings.emptyArray
             return Set(strArray)
         }
     }
     
     func addFavorite( stop: Stop ) {
-        var favStops = favoriteStops
+        var favStops = favoriteIDs
         
         favStops.insert(stop.id)
-        favoriteStops = favStops
+        favoriteIDs = favStops
     }
     
     func removeFavorite( stop: Stop ) {
-        var favStops = favoriteStops
+        var favStops = favoriteIDs
         favStops.remove(stop.id)
-        favoriteStops = favStops
+        favoriteIDs = favStops
     }
     
     /*
-     Problem: How to always display favorite stops?
+     How to always display favorite stops:
      
      1) Maintain array of favorite stops.
-     1a) At startup, initialize list with query of UserSettings.favoriteStops ids.
+     1a) At startup, initialize list with query of UserSettings.favoriteIDs ids.
      1b) When User adds or removes favorite stop, update array
      2) MapViewController has a list of persistent stops which are not removed when stops are refeshed? 
  */

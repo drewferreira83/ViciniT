@@ -27,8 +27,8 @@ public class ViciniT: NSObject, QueryListener {
         _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.stopType.ferry)
         
         // Ask for favorite stops, if any.
-        if !UserSettings.shared.favoriteStops.isEmpty {
-            _ = Query(kind: .theseStops, parameterData: Array( UserSettings.shared.favoriteStops), usageData: false)
+        if !UserSettings.shared.favoriteIDs.isEmpty {
+            _ = Query(kind: .theseStops, parameterData: Array( UserSettings.shared.favoriteIDs), usageData: false)
         }
    }
     
@@ -41,12 +41,22 @@ public class ViciniT: NSObject, QueryListener {
     }
     
     public func dataPendingUpdate(busy: Bool) {
-        map.setDataPending(busy)
+        map.set(dataPending: busy)
     }
 
-    func showFavorites() {
-        _ = Query(kind: .theseStops, parameterData: Array(UserSettings.shared.favoriteStops))
+    public func showFavorites() {
+        _ = Query(kind: .theseStops, parameterData: Array(UserSettings.shared.favoriteIDs), usageData: true)
     }
     
+    public func searchForStops( in region: MKCoordinateRegion ) {
+        let excludeBuses = region.span.maxDelta > 0.04
+        
+        if excludeBuses && UserSettings.shared.routeTypes[GTFS.RouteType.bus.rawValue]  {
+            map.show(message: "Zoom in to see bus stops", timeout: 8.0)
+        } 
+        
+        let kind: Query.Kind = excludeBuses ? .majorStopsInRegion : .allStopsInRegion
+        _ = Query(kind: kind, parameterData: region)
+    }
 }
 

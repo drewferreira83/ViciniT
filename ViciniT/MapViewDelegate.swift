@@ -20,6 +20,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
             if let markView = mapView.dequeueReusableAnnotationView(withIdentifier: MarkView.Identifier) as? MarkView {
                 // We are reusing this annotation.  Need to overwrite the old values.
                 markView.annotation = mark
+                markView.detailCalloutAccessoryView = nil
                 return markView
             } else {
                 // Need to create a new custom annotation view
@@ -74,12 +75,11 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
 
     private func mapViewRegionDidChangeFromUserInteraction() -> Bool {
         let view = self.mapView.subviews[0]
+        
         if let gestureRecognizers = view.gestureRecognizers {
             for recognizer in gestureRecognizers {
                 if( recognizer.state == UIGestureRecognizer.State.began || recognizer.state == UIGestureRecognizer.State.ended ) {
-                    userChangedRegion = true
-                    return false
-                    //return true
+                    return true
                 }
             }
         }
@@ -87,19 +87,18 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
     }
     
     func mapView(_ mapView: MKMapView, regionWillChangeAnimated animated: Bool) {
-        userInitiatedRegionChange = mapViewRegionDidChangeFromUserInteraction()
-
+        userChangedRegion = mapViewRegionDidChangeFromUserInteraction()
     }
 
     // The map's region has changed.  
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         // Update the stops, if appropriate.
-        if userInitiatedRegionChange || forceShowStops {
-            forceShowStops = false
+        if forceRefreshOnRegionChange {
+            forceRefreshOnRegionChange = false
             refreshStops()
         }
 
-        updateMapElements()
+        updateUI()
     }
     
     // NB:  If the user changes location privs directly in Settings, this method is called when the app is made active again.
@@ -112,9 +111,9 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
             self.mapView.showsUserLocation = showUser
 
             if let newCenter = Default.Location.manager.location?.coordinate {
-                self.forceShowStops = true
+                self.forceRefreshOnRegionChange = true
                 self.mapView.setCenter( newCenter, animated: true )
-                self.updateMapElements()
+                self.updateUI()
             }
         }
     }
@@ -135,8 +134,8 @@ extension ViciniT {
                 fatalError( "No Stop data for Mark \(mark)" )
             }
             
-            // Get predictions
-            _ =  Query(kind: .predictions, parameterData: stop )
+            // Get predictions.
+            _ =  Query(kind: .predictions, parameterData: stop, usageData: mark)
             
         default:
             Debug.log( "Selected detail of \(mark), but ignored" )
@@ -153,7 +152,7 @@ extension ViciniT {
             }
 
             // Get Routes at this stop.
-            _ = Query( kind: .routes, parameterData: stop )
+            _ = Query( kind: .routes, parameterData: stop, usageData: mark )
 
         default:
             Debug.log( "Selected \(mark), but ignored" )

@@ -69,7 +69,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         updateImages()
 
         // Force a reload of stops when we get back to the map.
-        MapViewController.shared.refreshStopsOnReturn = true
+        MapViewController.shared.forceRefreshOnAppear = true
     }
     
     override func viewWillAppear(_ animated: Bool) {

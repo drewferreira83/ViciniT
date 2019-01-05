@@ -92,4 +92,5 @@ public struct Session {
     public static var subwayStopIDs = Set<String>()
     public static var commRailIDs = Set<String>()
     public static var ferryIDs = Set<String>()
+    public static var favorites : [Mark]?
 }

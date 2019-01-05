@@ -78,10 +78,12 @@ extension ViciniT {
             }
             
             // The usage data is a Bool.  If true, then set map region to display all of these stops.  True is the default.
+            // The only time this is false is at startup when we load the users' favorite stops.
             let showMarks = query.uData as? Bool ?? true
             
             if !showMarks {
                 //  Just add the marks to the map.
+                Session.favorites = marks
                 map.add( marks: marks )
                 return
             }
@@ -110,18 +112,16 @@ extension ViciniT {
         
         case .routes:
             guard let routes = query.response as? [Route] else {
-                Debug.log("/routes returned something unexpected.")
-                return
+                fatalError("/routes returned something unexpected.")
             }
             
-            // If these routes are for a particular stop, then display the routes.
-            if let stop = query.pData as? Stop {
-                map.show(routes: routes, for: stop)
-                return
+            guard let mark = query.uData as? Mark else {
+                fatalError( "/routes didn't have a mark specified.")
             }
             
-            fatalError( "Got /Routes, but didn't have associated stop. \(query)" )
+            map.set(subtitle: routes.makeList(), for: mark)
             
+
         case .vehicles:
             guard let vehicles = query.response as? [Vehicle] else {
                 fatalError( "/vehicles returned something unexpected." )
@@ -139,16 +139,18 @@ extension ViciniT {
                 fatalError( "/predictions returned something unexpected. \(query)")
             }
             
-            if let stop = query.pData as? Stop {
-                //  TODO:  Post message to user.
-                if predictions.isEmpty {
-                    Debug.log( "No predictions for \(stop.name)" )
-                    break
-                }
-                
-                let sorted = predictions.sorted()
-                map.show( predictions: sorted, for: stop )
+            guard let mark = query.uData as? Mark else {
+                fatalError( "/predictions didn't have originating Mark. \(query)" )
             }
+            
+            if predictions.isEmpty {
+                Debug.log( "No predictions for \(mark)" )
+                break
+            }
+                
+            let sorted = predictions.sorted()
+            map.show( predictions: sorted, for: mark )
+
             
         case .stopsOfRouteType:
             guard let stops = query.response as? [Stop] else {

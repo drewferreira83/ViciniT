@@ -21,9 +21,11 @@ protocol MapManager {
     func add( marks: [Mark])
     func remove( marks: [Mark])
     
-    func show( predictions: [Prediction], for stop: Stop )
-    func show( routes: [Route], for stop: Stop )
-    func setDataPending( _ state: Bool )
+    func show( message: String?, timeout: TimeInterval? )
+    func show( predictions: [Prediction], for mark:Mark )
+    func set( subtitle: NSAttributedString, for mark: Mark )
+    func set( dataPending: Bool )
+    
 //    func select( mark: Mark )
     
     func getUserLocation() -> CLLocationCoordinate2D?
@@ -44,15 +46,7 @@ class MapViewController: UIViewController, MapManager {
     @IBOutlet weak var searchLabelButton: UIButton!
     
     @IBOutlet weak var searchBox: UIView!
-    
-    var userChangedRegion: Bool {
-        get { return _userChangedRegion }
-        set (value) {
-            _userChangedRegion = value
-            updateMapElements()
-        }
-    }
-    
+ 
     @IBAction func dismissBannerBox(_ sender: Any) {
         zoomMessageDismissed = true
         bannerBox.fadeOut()
@@ -60,7 +54,6 @@ class MapViewController: UIViewController, MapManager {
     
     @IBAction func searchForStops(_ sender: Any) {
         refreshStops()
-        
     }
     
     @IBAction func showFavorites(_ sender: Any) {
@@ -71,7 +64,7 @@ class MapViewController: UIViewController, MapManager {
     @IBAction func showLocation(_ sender: Any) {
         // We do want a search after the recenter.
         if let newCenter = Default.Location.manager.location?.coordinate {
-            forceShowStops = true
+            forceRefreshOnRegionChange = true
             mapView.setCenter(newCenter, animated: true)
         }
     }
@@ -82,12 +75,10 @@ class MapViewController: UIViewController, MapManager {
     var predictionsViewController: PredictionViewController!
     var predictionsNavVC: UINavigationController!
     
-    var userInitiatedRegionChange = false
-    var forceShowStops = false
-    var refreshStopsOnReturn = false
+    var forceRefreshOnRegionChange = false
+    var forceRefreshOnAppear = false
     var zoomMessageDismissed = false
-    var _userChangedRegion = false
-    //var markViewSize = MarkView.Size.medium
+    var userChangedRegion = false
     
     override func viewDidLoad() {
         MapViewController.shared = self
@@ -109,7 +100,7 @@ class MapViewController: UIViewController, MapManager {
         buttonBox.alpha = 0.0
         bannerBox.alpha = 0.0
         bannerLabel.preferredMaxLayoutWidth = UIScreen.main.bounds.width - 60 // Padding and cancel button\
-        updateMapElements()
+        updateUI()
         
         // Create the Predictions View Controller.
         let mainStoryboard = UIStoryboard(name: "Main", bundle: Bundle.main)
@@ -129,7 +120,7 @@ class MapViewController: UIViewController, MapManager {
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined:
             Default.Location.manager.requestWhenInUseAuthorization()
-            forceShowStops = true
+            forceRefreshOnRegionChange = true
 
         case .authorizedAlways, .authorizedWhenInUse:
             mapView.showsUserLocation = true
@@ -140,7 +131,7 @@ class MapViewController: UIViewController, MapManager {
             
         default:
             mapView.showsUserLocation = false
-            forceShowStops = true
+            forceRefreshOnRegionChange = true
         }
         
         mapView.setRegion( startRegion, animated: false )
@@ -224,9 +215,9 @@ class MapViewController: UIViewController, MapManager {
     }
 
     // This displays the modal predictions view.
-    func show(predictions: [Prediction], for stop: Stop) {
+    func show(predictions: [Prediction], for mark: Mark) {
         DispatchQueue.main.async {
-            self.predictionsViewController?.setPredictions( predictions, for: stop )
+            self.predictionsViewController?.setPredictions( predictions, for: mark )
             if self.predictionsNavVC.presentingViewController == nil {
                 self.present(self.predictionsNavVC, animated: true, completion: nil)
             } 
@@ -234,21 +225,20 @@ class MapViewController: UIViewController, MapManager {
     }
     
     // This updates the callout on the currently selected markView with the routes for that stop.
-    func show( routes: [Route], for stop: Stop ) {
+    func set( subtitle: NSAttributedString, for mark: Mark ) {
         guard let markView = selectedMarkView else {
-            Debug.log( "Got routes for stop \(stop), but no marks are selected.", flag: .error)
+            Debug.log( "Got routes for mark\(mark), but no marks are selected.", flag: .error)
             return
         }
 
-        guard markView.mark.stop == stop else {
-            Debug.log( "Got routes for stop \(stop), but that mark isn't currently selected.", flag: .error )
+        guard markView.mark == mark else {
+            Debug.log( "Got routes for mark \(mark), but that mark isn't currently selected.", flag: .error )
             return
         }
         
-        let listOfRoutes = routes.makeList()
 
         DispatchQueue.main.async {
-            markView.detailLabel.attributedText = listOfRoutes
+            markView.detailLabel.attributedText = subtitle
             markView.detailCalloutAccessoryView = markView.detailLabel
         }
     }
@@ -266,23 +256,23 @@ class MapViewController: UIViewController, MapManager {
         selectedMarkView?.prepareForDisplay()
         
         // Should the stops be refreshed?
-        if refreshStopsOnReturn {
-            refreshStopsOnReturn = false
+        if forceRefreshOnAppear {
+            forceRefreshOnAppear = false
             refreshStops()
         }
         
-        updateMapElements()
+        updateUI()
     }
     
     // Called from AppDelegate when App comes back to foreground
     func didBecomeActive() {
         predictionsViewController.reloadPressed( self ) // NOOP if predictions isn't up
-        updateMapElements()
+        updateUI()
     }
     
     var searchLabelTimer: Timer?
     
-    func updateMapElements() {
+    func updateUI() {
         mapView.showsTraffic = UserSettings.shared.showsTraffic
 
         // Validate user tracking. The user may have changed in-app settings or directly through Device Settings.
@@ -294,7 +284,7 @@ class MapViewController: UIViewController, MapManager {
         //   MapView isn't showing user location (validation above checks both app flag and device privs)
         //   The user location is currently visible
         let hideLocationButton = !mapView.showsUserLocation || mapView.isUserLocationVisible
-        let hideFavoriteButton = UserSettings.shared.favoriteStops.isEmpty
+        let hideFavoriteButton = UserSettings.shared.favoriteIDs.isEmpty
         let hideButtonBox = hideLocationButton && hideFavoriteButton
 
         UIView.animate(withDuration: Default.aniDuration) {() -> Void in
@@ -313,7 +303,7 @@ class MapViewController: UIViewController, MapManager {
         // SEARCH BOX
         
         if userChangedRegion {
-            // If the search box is invisilble, then fade it in.
+            // If the search box is invisible, then fade it in.
             if searchBox.alpha == 0.0 {
                 searchLabelButton.isHidden = false
                 searchBox.fadeIn()
@@ -329,38 +319,38 @@ class MapViewController: UIViewController, MapManager {
                     }
                 }
             }
-        } else {
-            searchBox.fadeOut()
+        } 
+    }
+    
+    // Show the message and have it fade out if a timeout is given
+    // nil hides message immediately.
+    func show(message: String?, timeout: TimeInterval? = nil) {
+        DispatchQueue.main.async {
+            guard let message = message else {
+                self.bannerBox.fadeOut()
+                return
+            }
+            
+            self.bannerLabel.text = message
+            self.bannerBox.fadeIn()
+            if let timeout = timeout {
+                _ = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false ) { _ in
+                    self.bannerBox.fadeOut()
+                }
+            }
         }
-
-        
     }
   
     func refreshStops() {
-        let excludeBuses = mapView.region.span.maxDelta > 0.04
-        
-        if excludeBuses && UserSettings.shared.routeTypes[GTFS.RouteType.bus.rawValue] && !zoomMessageDismissed {
-            bannerLabel.text = "Zoom in to see bus stops"
-            bannerBox.fadeIn()
-            _ = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: false ) { _ in
-                self.bannerBox.fadeOut()
-            }
-        } else {
-            bannerBox.fadeOut()
-        }
-        
-        let kind: Query.Kind = excludeBuses ? .majorStopsInRegion : .allStopsInRegion
-        _ = Query(kind: kind, parameterData: mapView.region)
-        userChangedRegion = false
+        vicinit.searchForStops(in: mapView.region)
+        searchBox.fadeOut()
     }
     
-    func setDataPending( _ state: Bool ) {
+    func set( dataPending: Bool ) {
         DispatchQueue.main.async {
-            state ? self.busyIndicator.startAnimating() : self.busyIndicator.stopAnimating()
+            dataPending ? self.busyIndicator.startAnimating() : self.busyIndicator.stopAnimating()
         }
     }
     
 
 }
-
-
