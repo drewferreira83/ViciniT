@@ -20,15 +20,15 @@ protocol MapManager {
     func display( marks: [Mark], kind: Mark.Kind, select: Mark?)
     func add( marks: [Mark])
     func remove( marks: [Mark])
+    func center( mark: Mark )
     
     func show( message: String?, timeout: TimeInterval? )
     func show( predictions: [Prediction], for mark:Mark )
     func set( subtitle: NSAttributedString, for mark: Mark )
     func set( dataPending: Bool )
     
-//    func select( mark: Mark )
-    
     func getUserLocation() -> CLLocationCoordinate2D?
+    func getMapRect() -> MKMapRect
 }
 
 class MapViewController: UIViewController, MapManager {
@@ -45,6 +45,7 @@ class MapViewController: UIViewController, MapManager {
     @IBOutlet weak var searchButton: UIButton!
     @IBOutlet weak var searchLabelButton: UIButton!
     
+    @IBOutlet weak var buttonStack: UIStackView!
     @IBOutlet weak var searchBox: UIView!
  
     @IBAction func dismissBannerBox(_ sender: Any) {
@@ -91,16 +92,14 @@ class MapViewController: UIViewController, MapManager {
         mapView.mapType = .mutedStandard
         mapView.showsScale = true
 
-
         // Get User settings...
-        Query.routeTypes = UserSettings.shared.routeTypes
+        Query.validModes = UserSettings.shared.validModes
         mapView.delegate = self
 
         // Init UI elements
-        buttonBox.alpha = 0.0
+        //buttonBox.alpha = 0.0
         bannerBox.alpha = 0.0
         bannerLabel.preferredMaxLayoutWidth = UIScreen.main.bounds.width - 60 // Padding and cancel button\
-        updateUI()
         
         // Create the Predictions View Controller.
         let mainStoryboard = UIStoryboard(name: "Main", bundle: Bundle.main)
@@ -134,7 +133,7 @@ class MapViewController: UIViewController, MapManager {
             forceRefreshOnRegionChange = true
         }
         
-        mapView.setRegion( startRegion, animated: false )
+        mapView.setRegion( startRegion, animated: true )
         
         super.viewDidLoad()
     }
@@ -146,7 +145,15 @@ class MapViewController: UIViewController, MapManager {
     
     /****  PUBLIC FUNCTIONS  ****/
     
+    func getMapRect() -> MKMapRect {
+        return mapView.visibleMapRect
+    }
+
     func getUserLocation() -> CLLocationCoordinate2D? {
+        guard mapView.showsUserLocation else {
+            return nil
+        }
+        
         return Default.Location.manager.location?.coordinate
     }
     
@@ -164,6 +171,11 @@ class MapViewController: UIViewController, MapManager {
     }
     
     func select(mark: Mark) {
+    }
+    
+    func center( mark: Mark ) {
+        forceRefreshOnRegionChange = true
+        mapView.setCenter(mark.coordinate, animated: true)
     }
     
     // MAP REGION DOES NOT CHANGE:
@@ -250,8 +262,8 @@ class MapViewController: UIViewController, MapManager {
 
     // The selectedMarkView might need to be redrawn if its favorite status changed.
     //  The showFavoritesButton is shown if there are favorites.
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
         selectedMarkView?.prepareForDisplay()
         
@@ -287,11 +299,15 @@ class MapViewController: UIViewController, MapManager {
         let hideFavoriteButton = UserSettings.shared.favoriteIDs.isEmpty
         let hideButtonBox = hideLocationButton && hideFavoriteButton
 
+        
         UIView.animate(withDuration: Default.aniDuration) {() -> Void in
+            //self.buttonBox.alpha = hideButtonBox ? 0.0 : 1.0
             self.locationButton.isHidden = hideLocationButton
             self.favoriteButton.isHidden = hideFavoriteButton
-            self.buttonBox.alpha = hideButtonBox ? 0.0 : 1.0
         }
+        
+        print( "Update: \(hideLocationButton), \(hideFavoriteButton), \(hideButtonBox)")
+        print( "Stack size: \(buttonStack.frame)")
 
         // Note regarding animation of the buttons and its container:
         //   The buttons are inside a stackview which takes care of sizing itself when child objects are added/removed/hidden.
@@ -301,8 +317,8 @@ class MapViewController: UIViewController, MapManager {
         
         
         // SEARCH BOX
-        
-        if userChangedRegion {
+        // Display the search box if the user has changed the region and the auto-seach isn't on.
+        if userChangedRegion && !UserSettings.shared.searchOnScroll {
             // If the search box is invisible, then fade it in.
             if searchBox.alpha == 0.0 {
                 searchLabelButton.isHidden = false
@@ -351,6 +367,4 @@ class MapViewController: UIViewController, MapManager {
             dataPending ? self.busyIndicator.startAnimating() : self.busyIndicator.stopAnimating()
         }
     }
-    
-
 }

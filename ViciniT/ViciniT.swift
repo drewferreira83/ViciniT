@@ -44,14 +44,48 @@ public class ViciniT: NSObject, QueryListener {
         map.set(dataPending: busy)
     }
 
+    private func showAllFavorites() {
+        if Session.favorites.isEmpty {
+            return
+        }
+
+        map.ensureVisible(marks: Array(Session.favorites))
+    }
+    
     public func showFavorites() {
-        _ = Query(kind: .theseStops, parameterData: Array(UserSettings.shared.favoriteIDs), usageData: true)
+        // User pressed show favs button.
+        // SHOW ALL FAVORITES IF
+        //     No access to User location
+        //     Closest Favorite stop is on screen
+        // SCROLL TO CLOSEST FAVORITE otherwise
+        
+        guard !Session.favorites.isEmpty else {
+            fatalError( "No Favorites to display?" )
+        }
+        
+        guard let userLocation = map.getUserLocation() else {
+            showAllFavorites()
+            return
+        }
+        
+        // Which favorite mark is closest?
+        let closest = Session.favorites.closest(to: userLocation)
+        let visibleMapRect = map.getMapRect()
+        
+        //  If the closest mark is already on the map, then show All Favorites
+        if visibleMapRect.contains(closest.mapPoint) {
+            showAllFavorites()
+            return
+        }
+        
+        // Center the map on the closest mark.
+        map.center( mark: closest )
     }
     
     public func searchForStops( in region: MKCoordinateRegion ) {
         let excludeBuses = region.span.maxDelta > 0.04
         
-        if excludeBuses && UserSettings.shared.routeTypes[GTFS.RouteType.bus.rawValue]  {
+        if excludeBuses && UserSettings.shared.validModes[GTFS.RouteType.bus.rawValue]  {
             map.show(message: "Zoom in to see bus stops", timeout: 8.0)
         } 
         

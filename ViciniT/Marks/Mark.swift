@@ -16,12 +16,17 @@ open class Mark: NSObject, MKAnnotation {
     }
 
     public let coordinate: CLLocationCoordinate2D
+    public let mapPoint: MKMapPoint
     public let location: CLLocation
     public let title: String?
     public var subtitle: String?
     
     public let stop: Stop?
     public let vehicle: Vehicle?
+
+    var kind: Kind
+    var rotation: Int = 0
+    
     
     public var id: String {
         switch kind {
@@ -35,17 +40,31 @@ open class Mark: NSObject, MKAnnotation {
     
     var isFavorite: Bool {
         get {
-            return stop?.isFavorite ?? false
+            guard let stopID = self.stop?.id else { return false }
+            
+            return UserSettings.shared.favoriteIDs.contains(stopID)
+        }
+        
+        set (value) {
+            guard let stopID = self.stop?.id else { return }
+            
+            if value {
+                UserSettings.shared.favoriteIDs.insert( stopID )
+                Session.favorites.append( self )
+            } else {
+                UserSettings.shared.favoriteIDs.remove( stopID )
+                if let index = Session.favorites.firstIndex(of: self) {
+                    Session.favorites.remove(at: index)
+                }
+            }
         }
     }
-//    var image: UIImage?
-    var kind: Kind
-    var rotation: Int = 0
 
     init( stop: Stop ) {
         //  HACK:  To ensure minimum width of callout bubble, pad short stop names with spaces.
         self.coordinate = stop.coordinate
         self.location = CLLocation(latitude: stop.coordinate.latitude, longitude: stop.coordinate.longitude )
+        self.mapPoint = MKMapPoint(stop.coordinate)
         self.kind = .stop
         self.title = stop.name + (stop.name.count < 20  ? "            " : "")
         self.subtitle = nil 
@@ -61,6 +80,7 @@ open class Mark: NSObject, MKAnnotation {
         self.vehicle = vehicle
         self.coordinate = vehicle.coordinate
         self.location = CLLocation(latitude: vehicle.coordinate.latitude, longitude: vehicle.coordinate.longitude )
+        self.mapPoint = MKMapPoint(vehicle.coordinate)
         self.rotation = vehicle.bearing ?? 0
 
         // IF there is additional information about the vehicle...
@@ -103,13 +123,17 @@ func ==(lhs: Mark, rhs: Mark) -> Bool {
 }
 
 extension Array where Element == Mark {
-    public func closest( to coords: CLLocationCoordinate2D ) -> Mark? {
-        var closestMark: Mark?
+    public func closest( to coords: CLLocationCoordinate2D ) -> Mark {
+        guard !self.isEmpty else {
+            fatalError( "Set is empty! No such thing as closest")
+        }
         
+        var closestMark: Mark!
         var leastDistance: CLLocationDistance = .infinity
         
         for mark in self {
             let distance = mark.distance(from: coords)
+            
             if distance < leastDistance {
                 leastDistance = distance
                 closestMark = mark

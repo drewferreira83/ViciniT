@@ -27,7 +27,7 @@ extension Query {
     // GTFS route type is used as the index, true to include, false to ignore.
     //  e.g. [F,F,T,F,F] means Commuter Rail only. (index 2 = GTFS.RouteType = CommuterRail)
     // Start with including all route types
-    static var routeTypes = Query.allRouteTypes
+    static var validModes = Query.allRouteTypes
     
     static func makeURL(query: Query) -> URL? {
         var baseString: String = URL_HEAD
@@ -64,21 +64,19 @@ extension Query {
             
         
         case .stopsOfRouteType:
-            guard let routeTypesList = query.pData as? String else {
+            guard let validModesList = query.pData as? String else {
                 fatalError( "StopsOfType query requires a string \(String(describing:query.pData))" )
             }
             
             baseString.append( "/stops")
             baseString.append( MBTA_KEY )
             baseString.append( "&include=parent_station" )
-            baseString.append( "&filter[route_type]=\(routeTypesList)")
+            baseString.append( "&filter[route_type]=\(validModesList)")
 
-/*
         case .test:
             baseString =
-            "https://api-v3.mbta.com/stops?filter[latitude]=42.351074&filter[longitude]=-71.065126&filter[route_type]=0,1,4&page[limit]=7"
+            "https://api-v3.mbta.com/stops"
  
- */
         case .allStopsInRegion, .majorStopsInRegion:
             guard let region = query.pData as? MKCoordinateRegion else {
                 fatalError( "StopsInRegion query requires a region. \(String( describing: query.pData ))")
@@ -93,8 +91,8 @@ extension Query {
             let majorFilter = (query.kind == .majorStopsInRegion) ? Query.majorRouteTypes : Query.allRouteTypes
             var validTypes = [String]()
                 
-            for i in 0 ..< routeTypes.count {
-                if routeTypes[i] && majorFilter[i] {
+            for i in 0 ..< validModes.count {
+                if validModes[i] && majorFilter[i] {
                     validTypes.append( String(i) )
                 }
             }

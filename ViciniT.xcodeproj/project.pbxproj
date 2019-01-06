@@ -44,6 +44,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3A266F2521E267D0006CFFC3 /* Notes.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Notes.rtf; sourceTree = "<group>"; };
 		3A2E7F1F21DD1E76006FF6B1 /* MapOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapOptionsViewController.swift; sourceTree = "<group>"; };
 		3A45699121DA785200AFB866 /* GTFS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTFS.swift; sourceTree = "<group>"; };
 		3A4763682182157F0080AEB1 /* ViciniT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViciniT.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +98,7 @@
 		3A47635F2182157F0080AEB1 = {
 			isa = PBXGroup;
 			children = (
+				3A266F2521E267D0006CFFC3 /* Notes.rtf */,
 				3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */,
 				3A476380218215DD0080AEB1 /* MBTAKit */,
 				3A47636A2182157F0080AEB1 /* ViciniT */,

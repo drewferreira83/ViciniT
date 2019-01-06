@@ -43,7 +43,7 @@ extension Query {
         
         switch (kind) {
             
-        case .allStopsInRegion, .majorStopsInRegion, .theseStops, .stopsOfRouteType:
+        case .allStopsInRegion, .majorStopsInRegion, .theseStops, .stopsOfRouteType, .test:
             var stops = [Stop]()
             
             // Create the stops in the data block.
@@ -104,7 +104,6 @@ extension Query {
                 }
             }
             self.response = predictions
-            
             
         default:
             fatalError( "MBTAKit Receiver doesn't know how to handle Query \(kind)")

@@ -20,11 +20,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     @IBOutlet weak var infoWebView: WKWebView!
     @IBOutlet weak var showTrafficSwitch: UISwitch!
     
-    @IBAction func modalDismissed(_ sender: UIStoryboardSegue) {
-        print( "modal was dismissed.")
-    }
-    
-    var routeTypes = UserSettings.shared.routeTypes
+    var validModes = UserSettings.shared.validModes
     
     @IBAction func feedbackButtonPressed(_ sender: Any) {
         // Open mail window.
@@ -57,15 +53,15 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         UserSettings.shared.showsTraffic = sender.isOn
     }
     
-    @IBAction func routeTypeChanged(_ sender: UIButton) {
+    @IBAction func modeChanged(_ sender: UIButton) {
         let index = sender.tag
-        routeTypes[ index ] = !routeTypes[ index ]
+        validModes[ index ] = !validModes[ index ]
 
         // Internal GTFS codes 0 and 1 represent the external concept of Subway. The External.Subway button should have a
-        // tag of 1, so ensure that routeTypes[0] (GTFS.lightRai) be set to routeTypes[1] (GTFS.subway).
-        routeTypes[0] = routeTypes[1]
+        // tag of 1, so ensure that validModes[0] (GTFS.lightRai) be set to validModes[1] (GTFS.subway).
+        validModes[0] = validModes[1]
 
-        UserSettings.shared.routeTypes = routeTypes
+        UserSettings.shared.validModes = validModes
         updateImages()
 
         // Force a reload of stops when we get back to the map.
@@ -101,9 +97,9 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     
     
     func updateImages() {
-        let subwayImage = routeTypes[1] ? Images.subwayTrue : Images.subwayFalse
-        let commRailImage = routeTypes[2] ? Images.commRailTrue : Images.commRailFalse
-        let busImage = routeTypes[ 3 ] ? Images.busTrue : Images.busFalse
+        let subwayImage = validModes[1] ? Images.subwayTrue : Images.subwayFalse
+        let commRailImage = validModes[2] ? Images.commRailTrue : Images.commRailFalse
+        let busImage = validModes[ 3 ] ? Images.busTrue : Images.busFalse
         subwayButton.setImage(subwayImage, for: .normal)
         commRailButton.setImage( commRailImage, for: .normal)
         busButton.setImage(busImage, for: .normal)

@@ -13,7 +13,14 @@ import MapKit
 class UserSettings: NSObject {
     static let shared = UserSettings()
 
+    override private init() {
+        super.init()
+    }
+
     private var defaults = UserDefaults.standard
+
+    // Note that defaults.bool() returns false if no key exists.
+    // For bools that default to true, use 'defaults.object() as? Bool ?? true' instead.
 
     var showsTraffic: Bool {
         set (value) {
@@ -25,20 +32,27 @@ class UserSettings: NSObject {
         }
     }
     
-    override private init() {
-        super.init()
+    var searchOnScroll: Bool {
+        set (value) {
+            defaults.set( value, forKey: "searchOnScroll" )
+        }
+        
+        get {
+            return defaults.object(forKey: "searchOnScroll") as? Bool ?? true
+        }
     }
     
-    // A value of nil means to include all routes!
-    var routeTypes: [Bool] {
+    
+    // A value of nil means to include all routes types.
+    var validModes: [Bool] {
         get {
-            let boolArray = defaults.array(forKey: "routeTypes" ) as? [Bool]
+            let boolArray = defaults.array(forKey: "validModes" ) as? [Bool]
             return boolArray ?? Array<Bool>(repeating: true, count: 5)
         }
         
         set (value) {
-            defaults.set( value, forKey: "routeTypes" )
-            Query.routeTypes = value
+            defaults.set( value, forKey: "validModes" )
+            Query.validModes = value
         }
     }
     
@@ -48,8 +62,6 @@ class UserSettings: NSObject {
         }
             
         get {
-            // Note that defaults.bool() returns false if no key exists.
-            // Want to default to true if it doesn't exist, so use defaults.object() as? Bool instead.
             return defaults.object(forKey: "trackUser") as? Bool ?? true
         }
     }
@@ -66,7 +78,11 @@ class UserSettings: NSObject {
         }
     }
     
-    func addFavorite( stop: Stop ) {
+    func addFavorite( mark: Mark ) {
+        guard let stop = mark.stop else {
+            fatalError( "Can only mark stops as favorites. \(mark)")
+        }
+        
         var favStops = favoriteIDs
         
         favStops.insert(stop.id)
@@ -78,6 +94,8 @@ class UserSettings: NSObject {
         favStops.remove(stop.id)
         favoriteIDs = favStops
     }
+    
+    
     
     /*
      How to always display favorite stops:

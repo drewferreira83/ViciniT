@@ -29,11 +29,11 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     
     // The user toggled the favorite in the Nav Controller of the Predictions View.
     @IBAction func toggleFavorite(_ sender: Any) {
-        guard let stop = mark?.stop else {
+        guard mark.kind == .stop else {
             return
         }
         
-        stop.isFavorite = !stop.isFavorite
+        mark.isFavorite = !mark.isFavorite
         updateFavoriteButton()
     }
     
@@ -81,12 +81,7 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func updateFavoriteButton() {
-        guard let stop = mark?.stop else {
-            return
-        }
-        
-        let img = stop.isFavorite ? Images.favoriteTrue : Images.favoriteFalse
-        favoriteButton.image = img
+        favoriteButton.image = mark.isFavorite ? Images.favoriteTrue : Images.favoriteFalse
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -176,7 +171,7 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
 
 
         _ = Query(kind: .vehicles, parameterData: prediction.route)
-        _ = Query(kind: .theseStops, parameterData: prediction.route)
+        _ = Query(kind: .theseStops, parameterData: prediction.route, usageData: true)
         
         dismiss()
     }
@@ -275,21 +270,4 @@ extension Prediction {
     }
     
     
-}
-
-//  Support to track if the currently loaded stop is a favorite or not.
-extension Stop {
-    var isFavorite: Bool {
-        get {
-            return UserSettings.shared.favoriteIDs.contains( id )
-        }
-        
-        set (value) {
-            if value {
-                UserSettings.shared.addFavorite(stop: self)
-            } else {
-                UserSettings.shared.removeFavorite(stop: self)
-            }
-        }
-    }
 }

@@ -17,26 +17,23 @@ extension ViciniT {
        // Debug.log( query.url!.relativeString )
         
         switch query.kind {
-            /*
+/*
         case .test:
             guard let stops = query.response as? [Stop] else {
-                fatalError( "/stops returned something unexpected.")
+                fatalError( "/test returned something unexpected.")
             }
 
-            guard let region = query.pData as? MKCoordinateRegion else {
-                fatalError( "/stops didn't have a MKCoordinateRegion. \(query)" )
-            }
-
-            let center = CLLocation(latitude: region.center.latitude, longitude: region.center.longitude)
-            print( "Center point: (\(center.coordinate.latitude), \(center.coordinate.longitude))")
+            var minLat = 90.0, maxLat = 0.0, minLon = 0.0, maxLon = -180.0
             for stop in stops {
-                let stopLocation = CLLocation(latitude: stop.coordinate.latitude, longitude: stop.coordinate.longitude)
-//                print( "   (\(stopLocation.coordinate.latitude), \(stopLocation.coordinate.longitude)) --->  \(center.distance(from: stopLocation))")
-                
-                print( "  \(stop.name) -->  \(center.distance(from: stopLocation))")
+                minLat = min( minLat, stop.coordinate.latitude )
+                maxLat = max( maxLat, stop.coordinate.latitude )
+                minLon = min( minLon, stop.coordinate.longitude)
+                maxLon = max( maxLon, stop.coordinate.longitude)
             }
- */
 
+            print( minLat, maxLat, minLon, maxLon )
+ */
+            
         case .allStopsInRegion, .majorStopsInRegion:
             guard let stops = query.response as? [Stop] else {
                 fatalError( "/stops returned something unexpected.")
@@ -65,6 +62,7 @@ extension ViciniT {
             var marks = [Mark]()
             var coords = [CLLocationCoordinate2D]()
 
+            // Create the marks for the map and the coordinates
             for stop in stops {
                 // Ignore child stations.
                 if stop.parentID == nil {
@@ -95,15 +93,9 @@ extension ViciniT {
             let maxLat = coords.max { $0.latitude < $1.latitude }!.latitude
             let minLon = coords.min { $0.longitude < $1.longitude }!.longitude
             let maxLon = coords.max { $0.longitude < $1.longitude }!.longitude
-//            var span = MKCoordinateSpan(latitudeDelta: maxLat - minLat, longitudeDelta: maxLon - minLon)
-            
-            // Make sure the span isn't too small and add a small border.
-//            span.latitudeDelta = max( span.latitudeDelta, Default.Map.span.latitudeDelta ) + 0.01
-//            span.longitudeDelta = max( span.longitudeDelta, Default.Map.span.longitudeDelta ) + 0.01
-            
+
             let center = CLLocationCoordinate2D(latitude: minLat + (maxLat - minLat) / 2,
                                                 longitude: minLon + (maxLon - minLon) / 2)
-//            let region = MKCoordinateRegion(center: center, span: span)
             
             let userLocation = map.getUserLocation() ?? center
             let closestMark = marks.closest(to: userLocation)

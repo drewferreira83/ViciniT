@@ -93,19 +93,19 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
     // The map's region has changed.  
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         // Update the stops, if appropriate.
-        if forceRefreshOnRegionChange {
+        if forceRefreshOnRegionChange || (userChangedRegion && UserSettings.shared.searchOnScroll) {
             forceRefreshOnRegionChange = false
             refreshStops()
+            updateUI()
         }
 
-        updateUI()
     }
     
     // NB:  If the user changes location privs directly in Settings, this method is called when the app is made active again.
     // It is called before AppDelegate.applicatonDidBecomeActive.
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         // Show the user only if we are authorized.
-        let showUser = (status == .authorizedWhenInUse || status == .authorizedAlways) && UserSettings.shared.trackUser
+        let showUser = Default.Location.accessible && UserSettings.shared.trackUser
         
         DispatchQueue.main.async {
             self.mapView.showsUserLocation = showUser

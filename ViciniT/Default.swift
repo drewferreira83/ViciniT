@@ -41,6 +41,15 @@ public struct Default {
                 (CLLocationManager.authorizationStatus() == .authorizedAlways ||
                  CLLocationManager.authorizationStatus() == .authorizedWhenInUse)
         }
+        
+        // These are the bounds of all MBTA stops as of 1/6/2019.
+        public static let EPSILON =   0.001
+        public static let MIN_LAT =  41.58129 - EPSILON
+        public static let MAX_LAT =  42.79784 + EPSILON
+        public static let MIN_LON = -71.84849 - EPSILON
+        public static let MAX_LON = -70.62705 + EPSILON
+        
+        public static let BOSTON_RECT = MKMapRect(x: MIN_LON, y: MIN_LAT, width: MAX_LON - MIN_LON, height: MAX_LAT - MIN_LON)
     }
     
     public static let aniDuration = 0.5  // Map Elements that animate will use this for duration in animation loop
@@ -90,7 +99,9 @@ public struct Strings {
 
 public struct Session {
     public static var subwayStopIDs = Set<String>()
-    public static var commRailIDs = Set<String>()
-    public static var ferryIDs = Set<String>()
-    public static var favorites : [Mark]?
+    public static var commRailIDs   = Set<String>()
+    public static var ferryIDs      = Set<String>()
+
+    // favorites is an array because MKMapView works with arrays
+    public static var favorites     = Array<Mark>()
 }
