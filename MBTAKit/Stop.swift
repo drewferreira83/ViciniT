@@ -66,7 +66,7 @@ open class Stop: HasID {
             fatalError( "Stop could not get attributes from JXObject. \(source)")
         }
 
-        self.name = attributes.name
+        self.name = Stop.shorten(attributes.name)
         self.coordinate = CLLocationCoordinate2DMake(attributes.latitude, attributes.longitude)
         self.parentID = source.relatedID(key: .parent_station)
       
@@ -91,6 +91,36 @@ open class Stop: HasID {
         return Array<Stop>(set)
     }
 
+    
+    
+    
+    // These strings occur in stop names.  Abbreviate the name to display accoring to these pairs.
+    fileprivate static let abbreviationDictionary: [String: String] = [
+        "Commonwealth": "Comm",                 // Generally shorter is better
+        "Massachusetts": "Mass",
+        "before Manulife Building": "Inbound",  // Silver line
+        "after Manulife Building": "Outbound",  // Silver Line
+        " - Outbound": "",                      // Some stations make the distinction (Ashmont)
+        " - Inbound": "",
+        " - to Ashmont/Braintree": "",
+        " - to Alewife": "",
+        " (Limited Stops)": "",
+        "JFK/UMASS Ashmont": "JFK/UMASS",
+        "JFK/UMASS Braintree": "JFK/UMASS",
+        ", Boston": ""                          // Ferry terminals.  Don't remove ", Hull" because that's important info.
+    ]
+    
+    fileprivate static func shorten( _ string: String ) -> String {
+        var workingString = string
+        
+        for (term, abbreviation) in abbreviationDictionary {
+            workingString = workingString.replacingOccurrences(of: term, with: abbreviation)
+        }
+        
+        return workingString
+    }
+
+    
 }
 
 public func ==(lhs: Stop, rhs: Stop) -> Bool {

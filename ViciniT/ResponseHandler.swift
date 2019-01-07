@@ -135,8 +135,13 @@ extension ViciniT {
                 fatalError( "/predictions didn't have originating Mark. \(query)" )
             }
             
+            guard let stop = mark.stop else {
+                fatalError( "/predictions expected a stop. \(query)" )
+            }
+            
+            
             if predictions.isEmpty {
-                Debug.log( "No predictions for \(mark)" )
+                map.show(message: "No current predictions for \(stop.name)", timeout: 4.0)
                 break
             }
                 

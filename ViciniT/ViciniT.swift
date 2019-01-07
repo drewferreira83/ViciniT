@@ -64,6 +64,7 @@ public class ViciniT: NSObject, QueryListener {
         }
         
         guard let userLocation = map.getUserLocation() else {
+            // If we don't have access to the user's location, then show all favorites.
             showAllFavorites()
             return
         }
@@ -86,7 +87,7 @@ public class ViciniT: NSObject, QueryListener {
         let excludeBuses = region.span.maxDelta > 0.04
         
         if excludeBuses && UserSettings.shared.validModes[GTFS.RouteType.bus.rawValue]  {
-            map.show(message: "Zoom in to see bus stops", timeout: 8.0)
+            map.show(message: "Zoom in to see bus stops", timeout: 4.0)
         } 
         
         let kind: Query.Kind = excludeBuses ? .majorStopsInRegion : .allStopsInRegion

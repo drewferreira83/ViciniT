@@ -21,7 +21,7 @@ struct JXError: Decodable {
     let status: String?
     let code: String?
     let detail: String?
-    let source: [String:String]?
+    let source: StringDictionary?
 }
 
 typealias Relationships = [String: JXDataBlock]

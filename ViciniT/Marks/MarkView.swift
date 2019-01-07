@@ -65,11 +65,14 @@ class MarkView: MKAnnotationView {
             if rightCalloutAccessoryView == nil {
                 rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
             }
+            
+            //clusteringIdentifier = "Stop"
         } else {
             // Vehicle.
             newImage = Images.vehicle12
             newImage = newImage.rotate( byDegrees: mark.rotation)
             rightCalloutAccessoryView = nil
+            //clusteringIdentifier = nil
         }
         
         self.image = newImage

@@ -23,7 +23,7 @@ protocol MapManager {
     func center( mark: Mark )
     
     func show( message: String?, timeout: TimeInterval? )
-    func show( predictions: [Prediction], for mark:Mark )
+    func show( predictions: [Prediction], for mark: Mark )
     func set( subtitle: NSAttributedString, for mark: Mark )
     func set( dataPending: Bool )
     
@@ -89,6 +89,7 @@ class MapViewController: UIViewController, MapManager {
         mapView.register(MarkView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
 
         // Map Attributes that aren't changabled.
+        mapView.showsPointsOfInterest = false
         mapView.mapType = .mutedStandard
         mapView.showsScale = true
 
@@ -257,6 +258,7 @@ class MapViewController: UIViewController, MapManager {
    
     // Move the map regiom so that these marks are visible
     func ensureVisible(marks: [Mark]) {
+        forceRefreshOnRegionChange = true
         mapView.showAnnotations(marks, animated: true)
     }
 
@@ -301,13 +303,10 @@ class MapViewController: UIViewController, MapManager {
 
         
         UIView.animate(withDuration: Default.aniDuration) {() -> Void in
-            //self.buttonBox.alpha = hideButtonBox ? 0.0 : 1.0
+            self.buttonBox.alpha = hideButtonBox ? 0.0 : 1.0
             self.locationButton.isHidden = hideLocationButton
             self.favoriteButton.isHidden = hideFavoriteButton
         }
-        
-        print( "Update: \(hideLocationButton), \(hideFavoriteButton), \(hideButtonBox)")
-        print( "Stack size: \(buttonStack.frame)")
 
         // Note regarding animation of the buttons and its container:
         //   The buttons are inside a stackview which takes care of sizing itself when child objects are added/removed/hidden.
@@ -338,10 +337,18 @@ class MapViewController: UIViewController, MapManager {
         } 
     }
     
+    var bannerTimer: Timer?
+    
     // Show the message and have it fade out if a timeout is given
     // nil hides message immediately.
     func show(message: String?, timeout: TimeInterval? = nil) {
+        if bannerTimer != nil && bannerTimer!.isValid {
+            bannerTimer!.invalidate()
+            bannerTimer = nil
+        }
+        
         DispatchQueue.main.async {
+            // Nil message means dismiss.
             guard let message = message else {
                 self.bannerBox.fadeOut()
                 return
@@ -349,9 +356,12 @@ class MapViewController: UIViewController, MapManager {
             
             self.bannerLabel.text = message
             self.bannerBox.fadeIn()
+
+            // Set up a timer if we want this to dismiss itself.
             if let timeout = timeout {
-                _ = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false ) { _ in
+                self.bannerTimer = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false ) { _ in
                     self.bannerBox.fadeOut()
+                    self.bannerTimer = nil
                 }
             }
         }
