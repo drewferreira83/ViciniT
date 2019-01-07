@@ -107,6 +107,7 @@ open class Stop: HasID {
         " (Limited Stops)": "",
         "JFK/UMASS Ashmont": "JFK/UMASS",
         "JFK/UMASS Braintree": "JFK/UMASS",
+        "World Trade Center Station": "WTC",
         ", Boston": ""                          // Ferry terminals.  Don't remove ", Hull" because that's important info.
     ]
     

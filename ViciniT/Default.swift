@@ -65,6 +65,9 @@ public struct Images {
     public static let stop08 = UIImage( named: "stop-8" )
     public static let stopRail12 = UIImage( named: "stopRail-12" )
     
+    public static let stopDark08 = UIImage( named: "stopDark-8" )
+    public static let stopDark12 = UIImage( named: "stopDark-12" )
+    
     public static let vehicle24 = UIImage( named: "vehicle-24" )
     public static let vehicle18 = UIImage( named: "vehicle-18" )
     public static let vehicle12 = UIImage( named: "vehicle-12" )

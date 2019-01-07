@@ -55,7 +55,7 @@ class MarkView: MKAnnotationView {
             if mark.isFavorite {
                 newImage = Images.favoriteStop20
             } else if Session.subwayStopIDs.contains(mark.stop!.id) {
-                newImage = Images.stop12
+                newImage = Images.stopDark12
             } else if Session.commRailIDs.contains(mark.stop!.id) {
                 newImage = Images.stopRail12
             } else {

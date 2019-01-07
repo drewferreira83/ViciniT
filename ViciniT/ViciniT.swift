@@ -83,11 +83,14 @@ public class ViciniT: NSObject, QueryListener {
         map.center( mark: closest )
     }
     
+    fileprivate var didBusWarning = false
+    
     public func searchForStops( in region: MKCoordinateRegion ) {
         let excludeBuses = region.span.maxDelta > 0.04
         
-        if excludeBuses && UserSettings.shared.validModes[GTFS.RouteType.bus.rawValue]  {
+        if excludeBuses && !didBusWarning && UserSettings.shared.validModes[GTFS.RouteType.bus.rawValue]  {
             map.show(message: "Zoom in to see bus stops", timeout: 4.0)
+            didBusWarning = true
         } 
         
         let kind: Query.Kind = excludeBuses ? .majorStopsInRegion : .allStopsInRegion
