@@ -32,16 +32,7 @@ class UserSettings: NSObject {
         }
     }
     
-    var searchOnRegionChange: Bool {
-        set (value) {
-            defaults.set( value, forKey: "searchOnRegionChange" )
-        }
-        
-        get {
-            return defaults.object(forKey: "searchOnRegionChange") as? Bool ?? true
-        }
-    }
-    
+     
     
     // A value of nil means to include all routes types.
     var validModes: [Bool] {

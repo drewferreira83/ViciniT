@@ -171,7 +171,7 @@ class PredictionViewController: UIViewController, UITableViewDelegate, UITableVi
 
 
         _ = Query(kind: .vehicles, parameterData: prediction.route)
-        _ = Query(kind: .theseStops, parameterData: prediction.route, usageData: true)
+        _ = Query(kind: .theseStops, parameterData: prediction.route, usageData: Usage.TheseStops.route )
         
         dismiss()
     }

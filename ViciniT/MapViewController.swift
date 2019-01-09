@@ -16,11 +16,12 @@ protocol MapManager {
     //    func removeMarks(ofKind: Mark.Kind)
     //    func getMarks(ofKind: Mark.Kind) -> [Mark]
 
-    func ensureVisible( marks: [Mark])
-    func display( marks: [Mark], kind: Mark.Kind, select: Mark?)
+    func display( marks: [Mark], kind: Mark.Kind, setRegion: Bool )
     func add( marks: [Mark])
     func remove( marks: [Mark])
     func center( mark: Mark )
+    
+    func suspendAutoSearch( message: String )
     
     func show( message: String?, timeout: TimeInterval? )
     func show( predictions: [Prediction], for mark: Mark )
@@ -54,6 +55,8 @@ class MapViewController: UIViewController, MapManager {
     }
     
     @IBAction func searchForStops(_ sender: Any) {
+        searchOnRegionChange = true
+        searchBox.fadeOut()
         refreshStops()
     }
     
@@ -80,6 +83,7 @@ class MapViewController: UIViewController, MapManager {
     var forceRefreshOnAppear = false
     var zoomMessageDismissed = false
     var userChangedRegion = false
+    var searchOnRegionChange = true
     
     override func viewDidLoad() {
         MapViewController.shared = self
@@ -98,9 +102,9 @@ class MapViewController: UIViewController, MapManager {
         mapView.delegate = self
 
         // Init UI elements
-        //buttonBox.alpha = 0.0
         bannerBox.alpha = 0.0
         bannerLabel.preferredMaxLayoutWidth = UIScreen.main.bounds.width - 60 // Padding and cancel button\
+        searchBox.alpha = 0.0
         
         // Create the Predictions View Controller.
         let mainStoryboard = UIStoryboard(name: "Main", bundle: Bundle.main)
@@ -146,6 +150,15 @@ class MapViewController: UIViewController, MapManager {
     
     /****  PUBLIC FUNCTIONS  ****/
     
+    func suspendAutoSearch( message: String ) {
+        DispatchQueue.main.async {
+            self.searchOnRegionChange = false
+            self.searchLabelButton.titleLabel!.text = message
+            self.searchBox.layoutIfNeeded()
+            self.searchBox.fadeIn()
+        }
+    }
+    
     func getMapRect() -> MKMapRect {
         return mapView.visibleMapRect
     }
@@ -161,14 +174,22 @@ class MapViewController: UIViewController, MapManager {
     func add(marks: [Mark]) {
         // Add these marks - don't do anything else.
         DispatchQueue.main.async {
-            self.mapView.addAnnotations(marks)
+            self._add(marks:marks)
         }
+    }
+    
+    private func _add( marks: [Mark] ) {
+        mapView.addAnnotations(marks)
     }
     
     func remove(marks: [Mark]) {
         DispatchQueue.main.async {
-            self.mapView.removeAnnotations(marks)
+            self._remove(marks: marks)
         }
+    }
+    
+    private func _remove( marks: [Mark] ) {
+        mapView.removeAnnotations(marks)
     }
     
     func select(mark: Mark) {
@@ -185,13 +206,11 @@ class MapViewController: UIViewController, MapManager {
         }
     }
     
-    
-    //TODO:  Remove select:Mark parameter, add ensureVisible:Bool parameter.
-    // MAP REGION DOES NOT CHANGE:
+    // MAP REGION CHANGES IF setRegion:Bool is set
     //This method will instruct the mapView to display the passed marks.
     // It will only add new Marks and it will remove any marks of the specified kind
     // that are not in the passed array.
-    func display( marks: [Mark], kind: Mark.Kind, select: Mark? = nil ) {
+    func display( marks: [Mark], kind: Mark.Kind, setRegion: Bool) {
         // Which marks do we need to add to the existing annotations?
         var newMarks = [Mark]()
         for mark in marks {
@@ -223,14 +242,13 @@ class MapViewController: UIViewController, MapManager {
             }
         }
         
-        remove( marks: invalidMarks )
-        add( marks: newMarks )
+        DispatchQueue.main.async {
+            self._remove( marks: invalidMarks )
+            self._add( marks: newMarks )
         
-        // If we're given a mark to select...
-        if let markToSelect = select {
-            DispatchQueue.main.async {
-                self.mapView.showAnnotations(newMarks, animated: true)
-                self.mapView.selectAnnotation(markToSelect, animated: true)
+            if setRegion {
+                self.mapView.showAnnotations(marks, animated: true)
+                self.updateUI()
             }
         }
     }
@@ -263,17 +281,10 @@ class MapViewController: UIViewController, MapManager {
             markView.detailCalloutAccessoryView = markView.detailLabel
         }
     }
-   
-    // Move the map regiom so that these marks are visible
-    func ensureVisible(marks: [Mark]) {
-        forceRefreshOnRegionChange = true
-        mapView.showAnnotations(marks, animated: true)
-    }
 
     // The selectedMarkView might need to be redrawn if its favorite status changed.
     //  The showFavoritesButton is shown if there are favorites.
     override func viewDidAppear(_ animated: Bool) {
-        print( "viewDidAppear")
         selectedMarkView?.prepareForDisplay()
         
         // Should the stops be refreshed?
@@ -309,41 +320,33 @@ class MapViewController: UIViewController, MapManager {
         let hideLocationButton = !mapView.showsUserLocation || mapView.isUserLocationVisible
         let hideFavoriteButton = UserSettings.shared.favoriteIDs.isEmpty
         let hideButtonBox = hideLocationButton && hideFavoriteButton
-print( hideFavoriteButton)
         
-        UIView.animate(withDuration: Default.aniDuration) {() -> Void in
-            self.buttonBox.alpha = hideButtonBox ? 0.0 : 1.0
+        UIView.animate(withDuration: Default.aniDuration, animations: {() -> Void in
             self.locationButton.isHidden = hideLocationButton
             self.favoriteButton.isHidden = hideFavoriteButton
-        }
+            self.buttonBox.alpha = hideButtonBox ? 0.0 : 1.0
 
+            self.buttonStack.setNeedsLayout()
+
+        }, completion: nil )
+            
+        /*
+            { (state: Bool) -> Void in
+            self.buttonStack.layoutIfNeeded()
+            print( "Done: \(self.buttonBox.frame.height), \(self.buttonStack.frame.height)")
+        })
+        UIView.animate(withDuration: Default.aniDuration) {() -> Void in
+            self.locationButton.isHidden = hideLocationButton
+            self.favoriteButton.isHidden = hideFavoriteButton
+            self.buttonBox.isHidden = hideButtonBox
+            self.view.layoutIfNeeded()
+        }
+*/
         // Note regarding animation of the buttons and its container:
         //   The buttons are inside a stackview which takes care of sizing itself when child objects are added/removed/hidden.
-        //   This is why the buttons are toggled by changing the .isHidden component.
-        //   The buttonBox is a generic UIView.  If the buttonBox is hidden, the stackview will not resize based on changes in
-        //   its children.  This is why to hide the buttonBox, we change its .alpha component.
-        
-        
-        // SEARCH BOX
-        // Display the search box if the user has changed the region and the auto-seach isn't on.
-        if userChangedRegion && !UserSettings.shared.searchOnRegionChange {
-            // If the search box is invisible, then fade it in.
-            if searchBox.alpha == 0.0 {
-                searchLabelButton.isHidden = false
-                searchBox.fadeIn()
-            
-                // If there is no current timer, then make one that will hide the help message in a few seconds.
-                if searchLabelTimer == nil {
-                    searchLabelTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ -> Void in
-                        UIView.animate(withDuration: Default.aniDuration) { () -> Void in
-                            self.searchLabelButton.isHidden = true
-                        }
-                        
-                        self.searchLabelTimer = nil
-                    }
-                }
-            }
-        } 
+        // At times, the stackView has not resized correctly. This might be due to the stack being hidden when the resize is needed.
+        // Added the self.view.layoutIfNeeded() to see if this corrects this.  The problem occurs sporadically.
+
     }
     
     var bannerTimer: Timer?

@@ -52,7 +52,7 @@ extension ViciniT {
             }
                         
             // Does not change region, does not select anything. Doesn't affect any vehicles.
-            map.display(marks: marks, kind: .stop, select: nil )
+            map.display(marks: marks, kind: .stop, setRegion: false)
             
         case .theseStops:
             guard let stops = query.response as? [Stop] else {
@@ -75,34 +75,30 @@ extension ViciniT {
                 return
             }
             
-            // Is there a special use for this data?
-            if let usage = query.uData as? Usage {
-                if usage == .favoriteStops {
-                    //  Just add the marks to the map.
-                    Session.favorites = marks
-                    map.add( marks: marks )
-                    return
-                }
+            guard let usage = query.uData as? Usage.TheseStops else {
+                fatalError( ".TheseStops didn't have a valid usage. \(query)" )
             }
             
-            /*
-            // GOAL: Create MKCoordinateRegion that includes all stops.
+            switch usage {
+            case .favorite:
+                //  Just add the marks to the map.
+                Session.favorites = marks
+                map.add( marks: marks )
 
-            // Get the extrema for the lat and lng
-            let minLat = coords.min { $0.latitude < $1.latitude }!.latitude
-            let maxLat = coords.max { $0.latitude < $1.latitude }!.latitude
-            let minLon = coords.min { $0.longitude < $1.longitude }!.longitude
-            let maxLon = coords.max { $0.longitude < $1.longitude }!.longitude
+            case .inRegion:
+                // Display these stops, but do not chagnge the region.
+                map.display(marks: marks, kind: .stop, setRegion: false)
 
-            let center = CLLocationCoordinate2D(latitude: minLat + (maxLat - minLat) / 2,
-                                                longitude: minLon + (maxLon - minLon) / 2)
-            
-            let userLocation = map.getUserLocation() ?? center
-            let closestMark = marks.closest(to: userLocation)
-            */
-            
-            map.display(marks: marks, kind: .stop, select: nil)
-        
+            case .route:
+                // These stops comprise a route. Update the region.
+                guard let route = query.pData as? Route else {
+                    fatalError( ".TheseStops used as a route didn't have a route. \(query)")
+                }
+
+                map.suspendAutoSearch(message: route.mediumName )
+                map.display(marks: marks, kind: .stop, setRegion: true)
+            }
+           
         case .routes:
             guard let routes = query.response as? [Route] else {
                 fatalError("/routes returned something unexpected.")
@@ -125,7 +121,7 @@ extension ViciniT {
                 marks.append( Mark(vehicle: vehicle ) )
             }
             
-            map.display(marks: marks, kind: .vehicle, select: nil)
+            map.display(marks: marks, kind: .vehicle, setRegion: false)
 
         case .predictions:
             guard let predictions = query.response as? [Prediction] else {

@@ -28,7 +28,7 @@ public class ViciniT: NSObject, QueryListener {
         
         // Ask for favorite stops, if any.
         if !UserSettings.shared.favoriteIDs.isEmpty {
-            _ = Query(kind: .theseStops, parameterData: Array( UserSettings.shared.favoriteIDs), usageData: Usage.favoriteStops)
+            _ = Query(kind: .theseStops, parameterData: Array( UserSettings.shared.favoriteIDs), usageData: Usage.TheseStops.favorite )
         }
    }
     
@@ -49,7 +49,8 @@ public class ViciniT: NSObject, QueryListener {
             return
         }
 
-        map.display(marks: Session.favorites, kind: .stop, select: nil)
+        map.suspendAutoSearch(message: "All Favorite Stops" )
+        map.display(marks: Session.favorites, kind: .stop, setRegion: true)
     }
     
     public func showFavorites() {
@@ -80,6 +81,7 @@ public class ViciniT: NSObject, QueryListener {
         }
         
         // Center the map on the closest mark.
+        map.show( message: "Closest favorite stop", timeout: 4.0 )
         map.center( mark: closest )
     }
     
@@ -88,10 +90,13 @@ public class ViciniT: NSObject, QueryListener {
     public func searchForStops( in region: MKCoordinateRegion ) {
         let excludeBuses = region.span.maxDelta > 0.04
         
+        /*
+         TODO:  Need different way to indicate buses are suppressed...
         if excludeBuses && !didBusWarning && UserSettings.shared.validModes[GTFS.RouteType.bus.rawValue]  {
             map.show(message: "Zoom in to see bus stops", timeout: 4.0)
             didBusWarning = true
-        } 
+        }
+        */
         
         let kind: Query.Kind = excludeBuses ? .majorStopsInRegion : .allStopsInRegion
         _ = Query(kind: kind, parameterData: region)
