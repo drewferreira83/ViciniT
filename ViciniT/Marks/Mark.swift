@@ -97,7 +97,6 @@ open class Mark: NSObject, MKAnnotation {
 
         super.init()
     }
-
  
     override open var description: String {
         return( "(Mark:\(kind) \"\(title ?? "No title")\" super[\(super.description)])")
@@ -117,7 +116,6 @@ open class Mark: NSObject, MKAnnotation {
 // Two marks are the same if they are at the same scope, of the same kind, and they have the same coordinates.
 func ==(lhs: Mark, rhs: Mark) -> Bool {
     return ((lhs.kind == rhs.kind) &&
-           // (lhs.scopeLevel == rhs.scopeLevel) &&
             (lhs.coordinate.latitude == rhs.coordinate.latitude) &&
             (lhs.coordinate.longitude == rhs.coordinate.longitude))
 }
@@ -150,12 +148,7 @@ extension Array where Element == Mark {
 
 extension UIImage {
     public func rotate(byDegrees: Int, flip: Bool = false) -> UIImage {
-        /*  TODO:  Need to return a COPY
-         if degrees == 0 {
-         return( UIImage(ciImage: self.ciImage!))
-         }
-         */
-        
+       
         if byDegrees == 0 {
             return self
         }

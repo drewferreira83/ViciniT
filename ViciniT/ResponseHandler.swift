@@ -75,17 +75,17 @@ extension ViciniT {
                 return
             }
             
-            // The usage data is a Bool.  If true, then set map region to display all of these stops.  True is the default.
-            // The only time this is false is at startup when we load the users' favorite stops.
-            let showMarks = query.uData as? Bool ?? true
-            
-            if !showMarks {
-                //  Just add the marks to the map.
-                Session.favorites = marks
-                map.add( marks: marks )
-                return
+            // Is there a special use for this data?
+            if let usage = query.uData as? Usage {
+                if usage == .favoriteStops {
+                    //  Just add the marks to the map.
+                    Session.favorites = marks
+                    map.add( marks: marks )
+                    return
+                }
             }
             
+            /*
             // GOAL: Create MKCoordinateRegion that includes all stops.
 
             // Get the extrema for the lat and lng
@@ -99,8 +99,9 @@ extension ViciniT {
             
             let userLocation = map.getUserLocation() ?? center
             let closestMark = marks.closest(to: userLocation)
+            */
             
-            map.display(marks: marks, kind: .stop, select: closestMark)
+            map.display(marks: marks, kind: .stop, select: nil)
         
         case .routes:
             guard let routes = query.response as? [Route] else {
@@ -186,4 +187,3 @@ extension ViciniT {
     }
   
 }
-

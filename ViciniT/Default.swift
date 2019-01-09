@@ -55,6 +55,10 @@ public struct Default {
     public static let aniDuration = 0.5  // Map Elements that animate will use this for duration in animation loop
 }
 
+public enum Usage: Int {
+    case showTheseStops, favoriteStops
+}
+
 public struct Images {
     public static let favoriteStop24 = UIImage( named: "favorite-24" )
     public static let favoriteStop20 = UIImage( named: "favorite-20" )
@@ -108,3 +112,4 @@ public struct Session {
     // favorites is an array because MKMapView works with arrays
     public static var favorites     = Array<Mark>()
 }
+

@@ -28,7 +28,7 @@ public class ViciniT: NSObject, QueryListener {
         
         // Ask for favorite stops, if any.
         if !UserSettings.shared.favoriteIDs.isEmpty {
-            _ = Query(kind: .theseStops, parameterData: Array( UserSettings.shared.favoriteIDs), usageData: false)
+            _ = Query(kind: .theseStops, parameterData: Array( UserSettings.shared.favoriteIDs), usageData: Usage.favoriteStops)
         }
    }
     
@@ -49,7 +49,7 @@ public class ViciniT: NSObject, QueryListener {
             return
         }
 
-        map.ensureVisible(marks: Array(Session.favorites))
+        map.display(marks: Session.favorites, kind: .stop, select: nil)
     }
     
     public func showFavorites() {

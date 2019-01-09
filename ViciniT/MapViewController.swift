@@ -89,7 +89,7 @@ class MapViewController: UIViewController, MapManager {
         mapView.register(MarkView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
 
         // Map Attributes that aren't changabled.
-        mapView.showsPointsOfInterest = false
+        mapView.showsPointsOfInterest = false  // Appears to be not functional.
         mapView.mapType = .mutedStandard
         mapView.showsScale = true
 
@@ -139,7 +139,7 @@ class MapViewController: UIViewController, MapManager {
         super.viewDidLoad()
     }
     
-     override func didReceiveMemoryWarning() {
+    override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
@@ -172,13 +172,21 @@ class MapViewController: UIViewController, MapManager {
     }
     
     func select(mark: Mark) {
+        DispatchQueue.main.async {
+            self.mapView.selectAnnotation(mark, animated: true)
+        }
     }
     
     func center( mark: Mark ) {
         forceRefreshOnRegionChange = true
-        mapView.setCenter(mark.coordinate, animated: true)
+        DispatchQueue.main.async {
+            self.mapView.setCenter(mark.coordinate, animated: true)
+            self.mapView.selectAnnotation(mark, animated: true)
+        }
     }
     
+    
+    //TODO:  Remove select:Mark parameter, add ensureVisible:Bool parameter.
     // MAP REGION DOES NOT CHANGE:
     //This method will instruct the mapView to display the passed marks.
     // It will only add new Marks and it will remove any marks of the specified kind
@@ -265,8 +273,7 @@ class MapViewController: UIViewController, MapManager {
     // The selectedMarkView might need to be redrawn if its favorite status changed.
     //  The showFavoritesButton is shown if there are favorites.
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
+        print( "viewDidAppear")
         selectedMarkView?.prepareForDisplay()
         
         // Should the stops be refreshed?
@@ -276,6 +283,8 @@ class MapViewController: UIViewController, MapManager {
         }
         
         updateUI()
+
+        super.viewDidAppear(animated)
     }
     
     // Called from AppDelegate when App comes back to foreground
@@ -289,7 +298,7 @@ class MapViewController: UIViewController, MapManager {
     func updateUI() {
         mapView.showsTraffic = UserSettings.shared.showsTraffic
 
-        // Validate user tracking. The user may have changed in-app settings or directly through Device Settings.
+        // Validate user tracking. Access may have changed via in-app settings or directly through Device Settings.
         mapView.showsUserLocation = UserSettings.shared.trackUser && Default.Location.accessible
 
         // BUTTON BOX
@@ -300,7 +309,7 @@ class MapViewController: UIViewController, MapManager {
         let hideLocationButton = !mapView.showsUserLocation || mapView.isUserLocationVisible
         let hideFavoriteButton = UserSettings.shared.favoriteIDs.isEmpty
         let hideButtonBox = hideLocationButton && hideFavoriteButton
-
+print( hideFavoriteButton)
         
         UIView.animate(withDuration: Default.aniDuration) {() -> Void in
             self.buttonBox.alpha = hideButtonBox ? 0.0 : 1.0
@@ -317,7 +326,7 @@ class MapViewController: UIViewController, MapManager {
         
         // SEARCH BOX
         // Display the search box if the user has changed the region and the auto-seach isn't on.
-        if userChangedRegion && !UserSettings.shared.searchOnScroll {
+        if userChangedRegion && !UserSettings.shared.searchOnRegionChange {
             // If the search box is invisible, then fade it in.
             if searchBox.alpha == 0.0 {
                 searchLabelButton.isHidden = false

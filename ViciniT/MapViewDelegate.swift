@@ -93,7 +93,7 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
     // The map's region has changed.  
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         // Update the stops, if appropriate.
-        if forceRefreshOnRegionChange || (userChangedRegion && UserSettings.shared.searchOnScroll) {
+        if forceRefreshOnRegionChange || (userChangedRegion && UserSettings.shared.searchOnRegionChange) {
             forceRefreshOnRegionChange = false
             refreshStops()
             updateUI()
@@ -117,7 +117,6 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
             }
         }
     }
-
 }
 
 

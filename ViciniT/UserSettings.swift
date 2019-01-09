@@ -32,13 +32,13 @@ class UserSettings: NSObject {
         }
     }
     
-    var searchOnScroll: Bool {
+    var searchOnRegionChange: Bool {
         set (value) {
-            defaults.set( value, forKey: "searchOnScroll" )
+            defaults.set( value, forKey: "searchOnRegionChange" )
         }
         
         get {
-            return defaults.object(forKey: "searchOnScroll") as? Bool ?? true
+            return defaults.object(forKey: "searchOnRegionChange") as? Bool ?? true
         }
     }
     

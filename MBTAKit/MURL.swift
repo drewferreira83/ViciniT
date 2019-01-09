@@ -9,7 +9,6 @@
 import Foundation
 import MapKit
 
-// TODO:  This can be made into Query extension.
 extension Query {
     // Unprocessed MBTA URL looks like
     // https://api-v3.mbta.com/  stops     ?api_key=123   &filter[latitude]=42.3601    &filter[longitude]=-71.0589
