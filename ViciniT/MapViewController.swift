@@ -21,7 +21,7 @@ protocol MapManager {
     func remove( marks: [Mark])
     func center( mark: Mark )
     
-    func suspendAutoSearch( message: String )
+    func beginMode( message: String )
     
     func show( message: String?, timeout: TimeInterval? )
     func show( predictions: [Prediction], for mark: Mark )
@@ -43,20 +43,16 @@ class MapViewController: UIViewController, MapManager {
     @IBOutlet weak var bannerBox: UIView!
     @IBOutlet weak var bannerLabel: UILabel!
     @IBOutlet weak var busyIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var searchButton: UIButton!
-    @IBOutlet weak var searchLabelButton: UIButton!
-    
+    @IBOutlet weak var modeLabel: UILabel!
     @IBOutlet weak var buttonStack: UIStackView!
-    @IBOutlet weak var searchBox: UIView!
+    @IBOutlet weak var modeBox: UIView!
  
     @IBAction func dismissBannerBox(_ sender: Any) {
         zoomMessageDismissed = true
         bannerBox.fadeOut()
     }
     
-    @IBAction func searchForStops(_ sender: Any) {
-        searchOnRegionChange = true
-        searchBox.fadeOut()
+    @IBAction func endMode(_ sender: Any) {
         refreshStops()
     }
     
@@ -104,7 +100,7 @@ class MapViewController: UIViewController, MapManager {
         // Init UI elements
         bannerBox.alpha = 0.0
         bannerLabel.preferredMaxLayoutWidth = UIScreen.main.bounds.width - 60 // Padding and cancel button\
-        searchBox.alpha = 0.0
+        modeBox.alpha = 0.0
         
         // Create the Predictions View Controller.
         let mainStoryboard = UIStoryboard(name: "Main", bundle: Bundle.main)
@@ -150,12 +146,11 @@ class MapViewController: UIViewController, MapManager {
     
     /****  PUBLIC FUNCTIONS  ****/
     
-    func suspendAutoSearch( message: String ) {
+    func beginMode( message: String ) {
         DispatchQueue.main.async {
             self.searchOnRegionChange = false
-            self.searchLabelButton.titleLabel!.text = message
-            self.searchBox.layoutIfNeeded()
-            self.searchBox.fadeIn()
+            self.modeLabel.text = message
+            self.modeBox.fadeIn()
         }
     }
     
@@ -186,6 +181,20 @@ class MapViewController: UIViewController, MapManager {
         DispatchQueue.main.async {
             self._remove(marks: marks)
         }
+    }
+    
+    private func _remove( kind: Mark.Kind) {
+        var marks = [Mark]()
+        
+        for anno in mapView.annotations {
+            if let mark = anno as? Mark {
+                if mark.kind == kind {
+                    marks.append( mark )
+                }
+            }
+        }
+
+        mapView.removeAnnotations( marks )
     }
     
     private func _remove( marks: [Mark] ) {
@@ -380,8 +389,12 @@ class MapViewController: UIViewController, MapManager {
     }
   
     func refreshStops() {
+        searchOnRegionChange = true
+        modeBox.fadeOut()
+        
+        _remove(kind: .vehicle)
+
         vicinit.searchForStops(in: mapView.region)
-        searchBox.fadeOut()
     }
     
     func set( dataPending: Bool ) {

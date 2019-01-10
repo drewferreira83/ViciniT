@@ -96,9 +96,9 @@ extension MapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
         if forceRefreshOnRegionChange || (userChangedRegion && searchOnRegionChange) {
             forceRefreshOnRegionChange = false
             refreshStops()
-            updateUI()
         }
 
+        updateUI()
     }
     
     // NB:  If the user changes location privs directly in Settings, this method is called when the app is made active again.

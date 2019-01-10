@@ -49,7 +49,7 @@ public class ViciniT: NSObject, QueryListener {
             return
         }
 
-        map.suspendAutoSearch(message: "All Favorite Stops" )
+        map.beginMode(message: "All Favorite Stops" )
         map.display(marks: Session.favorites, kind: .stop, setRegion: true)
     }
     
