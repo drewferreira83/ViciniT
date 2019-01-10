@@ -95,7 +95,7 @@ extension ViciniT {
                     fatalError( ".TheseStops used as a route didn't have a route. \(query)")
                 }
 
-                map.beginMode(message: route.mediumName )
+                map.beginMode(message: route.fullName )
                 map.display(marks: marks, kind: .stop, setRegion: true)
             }
            
