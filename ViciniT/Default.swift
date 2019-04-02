@@ -110,7 +110,8 @@ public struct Session {
     public static var subwayStopIDs = Set<String>()
     public static var commRailIDs   = Set<String>()
     public static var ferryIDs      = Set<String>()
-
+    public static var routes        = [MBTA.RouteType: [Route]]()
+    
     // favorites is an array because MKMapView works with arrays
     public static var favorites     = Array<Mark>()
 }

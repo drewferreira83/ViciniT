@@ -19,6 +19,10 @@ open class HasID: Hashable, CustomStringConvertible {
         _id = id
     }
     
+    public func hash( into hasher: inout Hasher ) {
+        hasher.combine(_id)
+    }
+
     public var hashValue: Int {
         return _id.hashValue
     }

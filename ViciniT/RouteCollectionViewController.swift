@@ -12,17 +12,18 @@ private let reuseIdentifier = "busCell"
 
 class RouteCollectionViewController: UICollectionViewController {
 
+    var data: [Route]!
+    
+    /*
+     //  Currently, don't do anything special at load.
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
-        // Register cell classes
-        self.collectionView!.register(RouteCollectionCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-
         // Do any additional setup after loading the view.
     }
+ */
 
     /*
     // MARK: - Navigation
@@ -44,13 +45,15 @@ class RouteCollectionViewController: UICollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
-        return 80
+        return data.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! RouteCollectionCell 
 
-        cell.label.text = String( indexPath.row )
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! RouteCollectionViewCell
+
+        cell.label.text = data[indexPath.row].shortName
+
         return cell
     }
 
@@ -85,9 +88,4 @@ class RouteCollectionViewController: UICollectionViewController {
     }
     */
 
-}
-
-class RouteCollectionCell: UICollectionViewCell {
-    @IBOutlet var label: UILabel!
-    
 }

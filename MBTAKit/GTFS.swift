@@ -69,10 +69,33 @@ public struct GTFS {
 }
 
 public struct MBTA {
-    public struct stopType {
-        public static let subway = "0,1"
-        public static let commRail = "2"
-        public static let bus = "3"
-        public static let ferry = "4"
+    public enum RouteType: Int, CaseIterable {
+        case subway, commuterRail, bus, ferry
+    }
+    
+    public static func codeFor( routeType: RouteType) -> String {
+        switch routeType {
+        case .subway:
+            return "0,1"
+        case .commuterRail:
+            return "2"
+        case .bus:
+            return "3"
+        case .ferry:
+            return "4"
+        }
+    }
+
+    public static func routeType( gtfsType: GTFS.RouteType) -> RouteType {
+        switch (gtfsType) {
+        case .subway, .lightRail:
+            return RouteType.subway
+        case .commuterRail:
+            return RouteType.commuterRail
+        case .bus:
+            return RouteType.bus
+        case .ferry:
+            return RouteType.ferry
+        }
     }
 }

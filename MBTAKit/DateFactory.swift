@@ -29,7 +29,7 @@ public class DateFactory {
 }
 
 public extension NSAttributedString {
-    public func width(height: CGFloat) -> CGFloat {
+    func width(height: CGFloat) -> CGFloat {
         let constraintRect = CGSize(width: .greatestFiniteMagnitude, height: height)
         let boundingBox = self.boundingRect(with: constraintRect,
                                             options: [.usesLineFragmentOrigin, .usesFontLeading],

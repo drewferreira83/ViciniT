@@ -104,12 +104,41 @@ extension ViciniT {
                 fatalError("/routes returned something unexpected.")
             }
             
-            guard let mark = query.uData as? Mark else {
-                fatalError( "/routes didn't have a mark specified.")
+            // Request for all routes
+            if query.pData == nil {
+                // Initialize the Session storage.
+                for routeType in MBTA.RouteType.allCases {
+                    Session.routes[ routeType ] = [Route]()
+                }
+
+                // Stuff these routes into the Sessions storage.
+                for route in routes {
+                    Session.routes[ MBTA.routeType(gtfsType: route.type!) ]?.append(route)
+                }
+                for routeType in MBTA.RouteType.allCases {
+                    for route in Session.routes[ routeType ]! {
+                        print( "\(routeType): \(route.id)" )
+                    }
+                }
+                break
             }
             
-            map.set(subtitle: routes.makeList(), for: mark)
+            // Request for routes that serve a particular stop
+            if let _ = query.pData as? Stop {
+                guard let mark = query.uData as? Mark else {
+                    fatalError( "/routes for a stop didn't have a mark specified.")
+                }
+                
+                map.set(subtitle: routes.makeList(), for: mark)
+                break
+            }
             
+            // STUB:Request for route info for an id
+            if let _ = query.pData as? String {
+                break
+            }
+            
+            fatalError( "/routes doesn't have known context.")
 
         case .vehicles:
             guard let vehicles = query.response as? [Vehicle] else {
@@ -151,7 +180,7 @@ extension ViciniT {
                 fatalError( "/stopsOfRoutType returned something unexpected. \(query)")
             }
             
-            guard let filter = query.pData as? String else {
+            guard let filter = query.pData as? MBTA.RouteType else {
                 fatalError( "Can't interpret filter for .stopsOfRouteType. \(query)" )
             }
             
@@ -164,13 +193,13 @@ extension ViciniT {
             }
             
             switch filter {
-            case MBTA.stopType.subway:
+            case MBTA.RouteType.subway:
                 Session.subwayStopIDs = idSet
                 
-            case MBTA.stopType.commRail:
+            case MBTA.RouteType.commuterRail:
                 Session.commRailIDs = idSet
                 
-            case MBTA.stopType.ferry:
+            case MBTA.RouteType.ferry:
                 Session.ferryIDs = idSet
                 
             default:

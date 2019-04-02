@@ -63,14 +63,15 @@ extension Query {
             
         
         case .stopsOfRouteType:
-            guard let validModesList = query.pData as? String else {
-                fatalError( "StopsOfType query requires a string \(String(describing:query.pData))" )
+            guard let routeType = query.pData as? MBTA.RouteType else {
+                fatalError( "StopsOfType query requires a MBTA.RouteType \(String(describing:query.pData))" )
             }
             
             baseString.append( "/stops")
             baseString.append( MBTA_KEY )
             baseString.append( "&include=parent_station" )
-            baseString.append( "&filter[route_type]=\(validModesList)")
+            let code = MBTA.codeFor(routeType: routeType)
+            baseString.append( "&filter[route_type]=\(code)" )
 
         case .test:
             baseString =
@@ -115,8 +116,9 @@ extension Query {
             baseString.append( MBTA_KEY )
             baseString.append("&sort=sort_order")
             
-            if let routeID = query.pData as? String {
-                baseString.append( "&filter[id]=\(routeID.forURL)" )
+            if let routeType = query.pData as? MBTA.RouteType {
+                let mbtaCode = MBTA.codeFor(routeType: routeType)
+                baseString.append( "&filter[id]=\(mbtaCode)" )
                 break
             }
             

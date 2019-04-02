@@ -22,14 +22,17 @@ public class ViciniT: NSObject, QueryListener {
         ViciniT.share = self
         
         // Ask for list of subway stops and commuter rail stops.
-        _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.stopType.subway)
-        _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.stopType.commRail)
-        _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.stopType.ferry)
+        _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.RouteType.subway)
+        _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.RouteType.commuterRail)
+        _ = Query(kind: .stopsOfRouteType, parameterData: MBTA.RouteType.ferry)
         
         // Ask for favorite stops, if any.
         if !UserSettings.shared.favoriteIDs.isEmpty {
             _ = Query(kind: .theseStops, parameterData: Array( UserSettings.shared.favoriteIDs), usageData: Usage.TheseStops.favorite )
         }
+        
+        // Ask for all routes
+        _ = Query(kind: .routes)
    }
     
     override public var description: String {

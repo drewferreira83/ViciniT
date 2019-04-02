@@ -43,6 +43,7 @@
 		3A4763C5218216240080AEB1 /* ViciniTHelp.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */; };
 		3A4763CC21835B1E0080AEB1 /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4763CB21835B1E0080AEB1 /* Debug.swift */; };
 		3AD3010E21D6745B00A7EC5A /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD3010D21D6745B00A7EC5A /* Utilities.swift */; };
+		3AD5A42D22539F78007D2D12 /* RouteCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD5A42C22539F78007D2D12 /* RouteCollectionViewCell.swift */; };
 		3AFDF6F8218F41C9009B79FF /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFDF6F7218F41C9009B79FF /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -86,6 +87,7 @@
 		3A4763C4218216240080AEB1 /* ViciniTHelp.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = ViciniTHelp.rtf; sourceTree = "<group>"; };
 		3A4763CB21835B1E0080AEB1 /* Debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Debug.swift; path = Debug/Debug.swift; sourceTree = SOURCE_ROOT; };
 		3AD3010D21D6745B00A7EC5A /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		3AD5A42C22539F78007D2D12 /* RouteCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteCollectionViewCell.swift; sourceTree = "<group>"; };
 		3AFDF6F7218F41C9009B79FF /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -137,6 +139,7 @@
 				3A4763AE218216070080AEB1 /* PredictionCell.swift */,
 				3A4763A3218216060080AEB1 /* PredictionViewController.swift */,
 				3A4763A2218216060080AEB1 /* ResponseHandler.swift */,
+				3AD5A42C22539F78007D2D12 /* RouteCollectionViewCell.swift */,
 				3A05794521E8228B009A2E8B /* RouteCollectionViewController.swift */,
 				3A05794321E8226F009A2E8B /* RouteTableViewController.swift */,
 				3A05794921E8237F009A2E8B /* RouteViewController.swift */,
@@ -192,8 +195,7 @@
 				3A4763B0218216070080AEB1 /* LaunchScreen.storyboard */,
 				3A4763B2218216070080AEB1 /* Main.storyboard */,
 			);
-			name = Base.lproj;
-			path = ../../../../newt2/ViciniT/ViciniT/Base.lproj;
+			path = Base.lproj;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -228,6 +230,7 @@
 				TargetAttributes = {
 					3A4763672182157F0080AEB1 = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1020;
 						SystemCapabilities = {
 							com.apple.Maps.iOS = {
 								enabled = 1;
@@ -295,6 +298,7 @@
 				3A4763B7218216070080AEB1 /* PredictionViewController.swift in Sources */,
 				3A05794621E8228B009A2E8B /* RouteCollectionViewController.swift in Sources */,
 				3A4763B9218216070080AEB1 /* MarkView.swift in Sources */,
+				3AD5A42D22539F78007D2D12 /* RouteCollectionViewCell.swift in Sources */,
 				3A476391218215DD0080AEB1 /* Query.swift in Sources */,
 				3A47639A218215DD0080AEB1 /* Schedule.swift in Sources */,
 				3A4763B4218216070080AEB1 /* ViciniT.swift in Sources */,
@@ -461,7 +465,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = boston.drew.ViciniT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -481,7 +485,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = boston.drew.ViciniT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

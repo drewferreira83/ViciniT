@@ -10,11 +10,11 @@ import UIKit
 
 class RouteTableViewController: UITableViewController {
 
+    var data: [Route]!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "tableViewCell")
-        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -31,14 +31,14 @@ class RouteTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 8
+        return data.count
         
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "tableViewCell", for: indexPath)
-        cell.textLabel?.text = String( indexPath.row )
+        let cell = tableView.dequeueReusableCell(withIdentifier: "routeCell", for: indexPath)
+        cell.textLabel?.text = data[indexPath.row].fullName
 
         return cell
     }

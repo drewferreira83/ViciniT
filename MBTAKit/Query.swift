@@ -92,6 +92,10 @@ open class Query: Hashable, CustomStringConvertible {
         }
     }
     
+    public func hash( into hasher: inout Hasher ) {
+        hasher.combine( id )
+    }
+    
     public var hashValue: Int {
         return id
     }

@@ -94,7 +94,7 @@ public class Route: HasID {
             plainName = id
             
         case .commuterRail:
-            if let dashIndex = id.index(of: "-") {
+            if let dashIndex = id.firstIndex(of: "-") {
                 let afterIndex = id.index(after: dashIndex)
                 plainName = String(id[afterIndex...])
             } else {
@@ -103,7 +103,7 @@ public class Route: HasID {
             }
 
         case .ferry:
-            if let index = longName.index(of: " ") {
+            if let index = longName.firstIndex(of: " ") {
                 plainName = String(longName[..<index])
             } else {
                 Debug.log( ".ferry ID not in expected form. \(self)")

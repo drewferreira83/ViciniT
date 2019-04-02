@@ -11,38 +11,33 @@ import UIKit
 class RouteViewController: UIViewController {
     @IBOutlet weak var container: UIView!
     @IBOutlet weak var modeSegmentedControl: UISegmentedControl!
+    
     @IBAction func modeChanged(_ sender: Any) {
-        switch modeSegmentedControl.selectedSegmentIndex {
-        case 0:
-            // Subway
-            remove(asChildViewController: collectionVC)
-            add(asChildViewController: tableVC)
-            break
-        case 1:
-            // Commuter Rail
-            break
-        case 2:
-            // Bus
-            remove(asChildViewController: tableVC)
-            add(asChildViewController: collectionVC)
-            break
-        default:
-            fatalError( "Illegal mode index." )
-        }
+        let newVC = routeViewControllers[ modeSegmentedControl.selectedSegmentIndex ]
+        add(asChildViewController: newVC)
+        remove(asChildViewController: current)
+        current = newVC
     }
 
-    var collectionVC: RouteCollectionViewController!
-    var tableVC: RouteTableViewController!
+    var current: UIViewController!
+    var routeViewControllers: [UIViewController]!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        collectionVC = storyboard.instantiateViewController(withIdentifier: "RouteCollectionVC") as? RouteCollectionViewController
-        tableVC = storyboard.instantiateViewController(withIdentifier: "RouteTableVC") as? RouteTableViewController
+        let bus = storyboard.instantiateViewController(withIdentifier: "RouteCollectionVC") as! RouteCollectionViewController
+        let rail = storyboard.instantiateViewController(withIdentifier: "RouteTableVC") as! RouteTableViewController
+        let subway = storyboard.instantiateViewController(withIdentifier: "RouteTableVC") as! RouteTableViewController
         
-        add(asChildViewController: tableVC)
+        bus.data = Session.routes[MBTA.RouteType.bus]
+        subway.data = Session.routes[MBTA.RouteType.subway]
+        rail.data = Session.routes[MBTA.RouteType.commuterRail]
         
+        routeViewControllers = [subway, rail, bus]
+        
+        current = subway
+        add(asChildViewController: subway)
     }
     
     private func remove(asChildViewController viewController: UIViewController) {
