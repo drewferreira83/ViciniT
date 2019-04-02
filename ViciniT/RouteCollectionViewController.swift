@@ -13,17 +13,14 @@ private let reuseIdentifier = "busCell"
 class RouteCollectionViewController: UICollectionViewController {
 
     var data: [Route]!
+    var tabBarVC: UITabBarController!
     
-    /*
-     //  Currently, don't do anything special at load.
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
 
-        // Do any additional setup after loading the view.
+        tabBarVC = tabBarController!
     }
- */
+
 
     /*
     // MARK: - Navigation
@@ -57,6 +54,16 @@ class RouteCollectionViewController: UICollectionViewController {
         return cell
     }
 
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let route = data[ indexPath.row ]
+        
+        _ = Query(kind: .vehicles, parameterData: route)
+        _ = Query(kind: .theseStops, parameterData: route, usageData: Usage.TheseStops.route)
+        
+        tabBarVC.selectedIndex = 0
+
+    }
+    
     // MARK: UICollectionViewDelegate
 
     /*

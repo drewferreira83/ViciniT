@@ -11,15 +11,12 @@ import UIKit
 class RouteTableViewController: UITableViewController {
 
     var data: [Route]!
+    var tabBarVC: UITabBarController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        tabBarVC = self.tabBarController!
     }
 
     // MARK: - Table view data source
@@ -43,6 +40,14 @@ class RouteTableViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let route = data[ indexPath.row ]
+        
+        _ = Query(kind: .vehicles, parameterData: route)
+        _ = Query(kind: .theseStops, parameterData: route, usageData: Usage.TheseStops.route)
+        
+        tabBarVC.selectedIndex = 0
+    }
 
     /*
     // Override to support conditional editing of the table view.
