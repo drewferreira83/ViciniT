@@ -18,7 +18,7 @@ class RouteCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tabBarVC = tabBarController!
+        tabBarVC = tabBarController! 
     }
 
 
